@@ -3,7 +3,7 @@ from ..engine import get_session
 from ..models.player import CreatePlayerData, CreatePlayerResponse, Role
 from ..schemas.player import Player, TeamType
 
-from app import app
+from ..app import app
 
 @app.post("/add-player", response_model=CreatePlayerResponse)
 def add_player(player_data: CreatePlayerData):

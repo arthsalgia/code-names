@@ -23,7 +23,7 @@ def create_db(db_url=None, create_schema=False):
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
     if create_schema:
-        import schemas
+        from . import schemas
         Base.metadata.create_all(engine)
 
     return engine

@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from .engine import create_db
 from backend.apis import __path__ as api_path
 
-from .core.constants import ENV, DATABASE_URL
+from . core.constants import ENV, DATABASE_URL
 
 create_db(DATABASE_URL, create_schema=True)
 
@@ -22,7 +22,7 @@ app = FastAPI(lifespan=lifespan, title="Codenames API")
 
 def import_all_routers():
     for loader, module_name, is_pkg in pkgutil.iter_modules(api_path):
-        module = importlib.import_module(f"apis.{module_name}")
+        module = importlib.import_module(f"backend.apis.{module_name}")
         if hasattr(module, "router"):
             app.include_router(module.router)
 
