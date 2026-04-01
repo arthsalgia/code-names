@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from schemas.team import TeamType
-from schemas.player import Role
+from ..schemas.team import TeamType
+from ..schemas.player import Role
 
 class Player(BaseModel):
     name : str

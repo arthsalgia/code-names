@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Enum as SQLEnum
-from base import Base
+from ..base import Base
 from .team import TeamType
 
 from typing import TYPE_CHECKING

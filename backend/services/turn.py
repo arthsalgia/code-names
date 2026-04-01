@@ -1,5 +1,5 @@
 import random
-from schemas.player import TeamType
+from ..schemas.player import TeamType
 
 def start_turn() -> TeamType:
     turn = random.choice([TeamType.red, TeamType.blue])

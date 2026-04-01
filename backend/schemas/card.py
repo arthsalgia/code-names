@@ -3,7 +3,7 @@ import enum
 from sqlalchemy import String, ForeignKey, UniqueConstraint, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Enum as SQLEnum
-from base import Base
+from ..base import Base
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

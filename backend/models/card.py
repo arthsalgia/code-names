@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Literal
-from schemas.card import CardType
 
 class Card(BaseModel):
     word: str

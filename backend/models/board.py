@@ -1,7 +1,7 @@
 from pydantic import BaseModel
-from models.player import Player
-from schemas.team import TeamType
-from models.card import Card
+from ..schemas.team import TeamType
+from .player import Player
+from .card import Card
 
 class Board(BaseModel):
     cards : dict[str, str]

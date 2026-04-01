@@ -1,6 +1,6 @@
 import random
 from engine import get_session
-from schemas.game import Game
+from ..schemas.game import Game
 
 def new_game_id():
     pass

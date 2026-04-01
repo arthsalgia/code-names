@@ -5,9 +5,9 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from .engine import create_db
-from .apis import __path__ as api_path
+from backend.apis import __path__ as api_path
 
-from core.constants import ENV, DATABASE_URL
+from .core.constants import ENV, DATABASE_URL
 
 create_db(DATABASE_URL, create_schema=True)
 

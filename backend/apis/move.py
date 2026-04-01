@@ -1,14 +1,14 @@
 from fastapi import HTTPException, status
-from app import app
-from models.move import PostMove, PostMoveResponse
-from schemas.card import Card, CardType
-from schemas.game import Game
-from schemas.player import Role
-from schemas.team import TeamType
-from services.end_game import end_game
-from apis.turn import current_turn
-from services.turn import get_next_turn
-from engine import get_session
+from ..app import app
+from ..models.move import PostMove, PostMoveResponse
+from ..schemas.card import Card, CardType
+from ..schemas.game import Game
+from ..schemas.player import Role
+from ..schemas.team import TeamType
+from ..services.end_game import end_game
+from .turn import current_turn
+from ..services.turn import get_next_turn
+from ..engine import get_session
 
 @app.post("/make-guess", response_model=PostMoveResponse)
 def make_guess(guess: PostMove):

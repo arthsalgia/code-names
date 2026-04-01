@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
-from engine import get_session
-from models.player import CreatePlayerData, CreatePlayerResponse, Role
-from schemas.player import Player, TeamType
+from ..engine import get_session
+from ..models.player import CreatePlayerData, CreatePlayerResponse, Role
+from ..schemas.player import Player, TeamType
 
 from app import app
 

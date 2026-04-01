@@ -1,8 +1,8 @@
-from schemas.card import Card, CardType
-from schemas.game import Game
-from schemas.team import TeamType
 from fastapi import HTTPException, status
 from sqlalchemy import func
+from ..schemas.card import Card, CardType
+from ..schemas.game import Game
+from ..schemas.team import TeamType
 
 def end_game(session, game_id, card_type, team):
 

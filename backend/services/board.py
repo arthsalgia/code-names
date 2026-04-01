@@ -1,5 +1,5 @@
 import random
-from schemas.card import Card
+from ..schemas.card import Card
 
 def create_board(game_id, turn, words):       
 

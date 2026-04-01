@@ -1,7 +1,7 @@
-from schemas.card import Card
-from engine import get_session
 from fastapi import HTTPException, status, Query
-from app import app
+from ..schemas.card import Card
+from ..engine import get_session
+from ..app import app
 
 @app.get("/get-cards")
 def get_cards(game_id: int = Query(..., description="ID of the game")):

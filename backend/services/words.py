@@ -1,5 +1,5 @@
 from random import sample
-from core.constants import NUM_CARDS, WORDS_URL
+from ..core.constants import NUM_CARDS, WORDS_URL
 
 def get_words(num = NUM_CARDS):
 

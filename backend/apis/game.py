@@ -1,13 +1,11 @@
-import random
-
 from fastapi import HTTPException, status
-from engine import get_session
-from services.board import create_board
-from services.words import get_words
-from services.turn import start_turn
-from schemas.game import Game
-from models.game import StartGameResponse
-from app import app
+from ..services.board import create_board
+from ..services.words import get_words
+from ..services.turn import start_turn
+from ..schemas.game import Game
+from ..models.game import StartGameResponse
+from ..engine import get_session
+from ..app import app
 
 
 @app.post("/start-game", response_model=StartGameResponse)
