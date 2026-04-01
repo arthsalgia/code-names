@@ -4,7 +4,7 @@ import pkgutil
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from engine import create_db
+from .engine import create_db
 from .apis import __path__ as api_path
 
 from core.constants import ENV, DATABASE_URL
