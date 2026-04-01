@@ -9,7 +9,3 @@ class Card(BaseModel):
     model_config = {
         "from_attributes": True
     }
-
-class GetCard(BaseModel):
-    game_id : int
-

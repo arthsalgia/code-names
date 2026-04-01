@@ -2,6 +2,10 @@ from random import sample
 from core.constants import NUM_CARDS, WORDS_URL
 
 def get_words(num = NUM_CARDS):
+
+    if not WORDS_URL:
+        print("Words not found")
+        return []
     try:
         words = []
         with open(WORDS_URL) as file:                

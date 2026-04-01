@@ -1,5 +1,5 @@
+import os
 from sqlalchemy import create_engine
-from core.constants import DB_CONNECTION_STRING
 from sqlalchemy.orm import sessionmaker 
 from base import Base
 from contextlib import contextmanager
@@ -7,16 +7,20 @@ from contextlib import contextmanager
 engine = None
 SessionLocal = None  
 
-def create_db(db_url, create_schema=False):
+def create_db(db_url=None, create_schema=False):
     global engine, SessionLocal
+
+    db_url = db_url or os.getenv("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError("DATABASE_URL is not set!")
 
     engine = create_engine(
         db_url,
         future=True,
-        connect_args={"check_same_thread": False} 
+        connect_args={"check_same_thread": False} if "sqlite" in db_url else {}
     )
 
-    SessionLocal = sessionmaker(bind=engine)
+    SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
     if create_schema:
         import schemas

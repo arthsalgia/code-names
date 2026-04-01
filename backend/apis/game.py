@@ -30,6 +30,9 @@ def start_game():
         cards = create_board(game_id, turn, words)
         new_game.cards = cards
 
+        session.commit()
+        session.refresh(new_game)
+
         return {"game_id":game_id, "turn": turn}
 
     

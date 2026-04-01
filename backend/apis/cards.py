@@ -1,5 +1,4 @@
 from schemas.card import Card
-from models.card import GetCard
 from engine import get_session
 from fastapi import HTTPException, status, Query
 from app import app
