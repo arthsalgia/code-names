@@ -28,3 +28,6 @@ def import_all_routers():
 
 import_all_routers()
 
+@app.get("/")
+def read_root():
+    return {"message": "Hello, Codenames backend is running!"}
