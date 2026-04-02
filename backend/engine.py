@@ -13,6 +13,10 @@ def create_db(db_url=None, create_schema=False):
     db_url = db_url or os.getenv("DATABASE_URL")
     if not db_url:
         raise RuntimeError("DATABASE_URL is not set!")
+    
+    if db_url.startswith("postgresql://"):
+        db_url = db_url.replace("postgresql://", "postgresql+psycopg://")
+
 
     engine = create_engine(
         db_url,
