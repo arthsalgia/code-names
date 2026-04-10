@@ -31,33 +31,12 @@
 .rules-popup {
   position: relative;
   background: #B6E1FC;
-  border-radius: 3em;
+  border-radius: 1em;
   padding: 2em;
   padding-top: 3em;
   width: 800px;
   height: 500px;
-  text-align: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-}
-
-.rules-popup h2 {
-  margin-top: 0;
-  font-size: 2em; 
-  color: #000;
-}
-
-.rules-popup p {
-  font-size: 1.1em;
-  line-height: 1.5;
-  color: #000;
-}
-
-.rules-popup {
-  position: relative;
-  background: #B6E1FC;
-  border-radius: 1em;
-  padding: 2em;
-  width: 400px;
+  overflow-y: auto;
   text-align: center;
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }

@@ -1,6 +1,7 @@
 
 
 .app-container {
+  position: relative;
   display: flex;
   justify-content: center;
   padding-top: 90px; 
