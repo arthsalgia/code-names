@@ -4,7 +4,7 @@ from ..engine import get_session
 from ..app import app
 
 @app.get("/get-cards")
-def get_cards(game_id: int = Query(..., description="ID of the game")):
+def get_cards(game_id: str = Query(..., description="ID of the game")):
 
     with get_session() as session:
         cards = session.query(

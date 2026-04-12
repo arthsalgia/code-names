@@ -3,7 +3,7 @@ from ..schemas.team import TeamType
 from ..schemas.player import Role
 
 class PostMove(BaseModel):
-    game_id : int
+    game_id : str
     team : TeamType
     role : Role
     word : str

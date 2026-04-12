@@ -1,28 +1,31 @@
 import random
-from engine import get_session
 from ..schemas.game import Game
 
-def new_game_id():
-    pass
-    # I might come back and change this sometime if i dont like the game id being an int
-    # the below code is also kinda wrong since it might produce something like 00000 or 10000 
-    # def get_id():
-    #     options = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    #     id = ""
+def new_game_id(session):
 
-    #     for _ in range(5):
-    #         id += random.choice(options)
+    def get_id():
+        numbers = "1234567890"
+        chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        new_id = ""
 
-    #     return id
+        for _ in range(2):
+            new_id += random.choice(numbers)
+        for _ in range(3):
+            new_id += random.choice(chars)
+
+        new_id = ''.join(random.sample(new_id, len(new_id)))
+
+        prev_ids = session.query(Game.id).scalars().all()
+        if new_id not in prev_ids:
+            return new_id
+        else:
+            return False
+
     
-    # id = get_id()
+    id = (get_id())
 
-    # with get_session() as session:
-    #     prev_ids = session.query(Game.id).all()
 
-    #     while True:
-    #         if id in prev_ids:
-    #             id = get_id()
-    #         else:
-    #             break
-            
+    while not id:
+        id = get_id()
+    
+    return id

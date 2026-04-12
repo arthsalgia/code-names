@@ -11,7 +11,7 @@ class CreatePlayerData(BaseModel):
     role : Role
     host : bool
     team : TeamType
-    game_id : int | None = None
+    game_id : str | None = None
 
 class CreatePlayerResponse(BaseModel):
     id : int

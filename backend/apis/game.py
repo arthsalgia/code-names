@@ -3,6 +3,7 @@ from ..services.board import create_board
 from ..services.words import get_words
 from ..services.turn import start_turn
 from ..schemas.game import Game
+from ..services.game_id import new_game_id
 from ..models.game import StartGameResponse
 from ..engine import get_session
 from ..app import app
@@ -23,7 +24,7 @@ def start_game():
         new_game = Game(winner=None, turn=turn)
         session.add(new_game)
         session.flush()
-        game_id = new_game.id
+        game_id = new_game_id(session)
 
         cards = create_board(game_id, turn, words)
         new_game.cards = cards

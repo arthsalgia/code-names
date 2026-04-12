@@ -1,10 +1,19 @@
-# env files
-.env
+# Node
+node_modules/
+dist/
+build/
 
-# python
+# Python
 __pycache__/
 *.pyc
-.venv/
+.env
 
-# misc
+# Supabase local
+.supabase/
+.supabase-temp/
+
+# OS junk
 .DS_Store
+
+# logs
+*.log

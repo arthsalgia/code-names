@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class Game(Base):
     __tablename__ = "game"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[str] = mapped_column(primary_key=True, autoincrement=False)
     winner: Mapped[TeamType | None] = mapped_column(SQLEnum(TeamType), nullable=True, index=True)
 
     turn: Mapped[TeamType | None]  = mapped_column(SQLEnum(TeamType), nullable=True)

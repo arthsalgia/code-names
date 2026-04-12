@@ -26,7 +26,7 @@ class Player(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    game_id: Mapped[int] = mapped_column(ForeignKey("game.id"), nullable=False, index=True)
+    game_id: Mapped[str] = mapped_column(ForeignKey("game.id"), nullable=False, index=True)
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
