@@ -16,7 +16,7 @@ export default function About() {
           <div className="header-popup" onClick={e => e.stopPropagation()}>
             <AboutText/>
 
-            <button onClick={() => setShowAbout(false)}>X</button>
+            <button onClick={() => setShowAbout(false)}>×</button>
           </div>
         </div>
       )}

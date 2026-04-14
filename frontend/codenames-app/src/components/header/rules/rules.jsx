@@ -16,7 +16,7 @@ export default function Rules() {
           <div className="header-popup" onClick={e => e.stopPropagation()}>
             <RulesText/>
 
-            <button onClick={() => setShowRules(false)}>X</button>
+            <button onClick={() => setShowRules(false)}>×</button>
           </div>
         </div>
       )}
