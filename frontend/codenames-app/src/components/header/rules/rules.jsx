@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './rules.css'
+import '../header.css'
 import RulesText from './rulesText';
 
 export default function Rules() {
@@ -7,13 +7,13 @@ export default function Rules() {
 
   return (
     <>
-      <button className="rules-btn" onClick={() => setShowRules(true)}>
+      <button className="header-btn" onClick={() => setShowRules(true)}>
         Rules
       </button>
 
       {showRules && (
-        <div className="rules-overlay" onClick={() => setShowRules(false)}>
-          <div className="rules-popup" onClick={e => e.stopPropagation()}>
+        <div className="header-overlay" onClick={() => setShowRules(false)}>
+          <div className="header-popup" onClick={e => e.stopPropagation()}>
             <RulesText/>
 
             <button onClick={() => setShowRules(false)}>X</button>
