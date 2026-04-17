@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
@@ -9,5 +10,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set!")
 
-WORDS_URL = os.getenv("WORDS_URL")
+BASE_DIR = Path(__file__).resolve().parent.parent
+WORDS_URL = BASE_DIR / "assets" / "words.txt"
 NUM_CARDS = int(os.getenv("NUM_CARDS", 25))
