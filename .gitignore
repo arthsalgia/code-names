@@ -1,0 +1,20 @@
+# Node
+node_modules/
+dist/
+build/
+
+# Python
+__pycache__/
+*.pyc
+.env
+
+# Supabase local
+.supabase/
+.supabase-temp/
+supabase/.temp/
+
+# OS junk
+.DS_Store
+
+# logs
+*.log

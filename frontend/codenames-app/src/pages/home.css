@@ -1,0 +1,29 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Cooper BT", "Cooper Black", "Bookman Old Style", serif;
+  padding-top: 2em;
+}
+
+.home-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.home h1 {
+  font-size: 3em;
+  font-weight: 700;
+  color: #141e2b;
+  text-align: center;
+  margin: 0;
+}
+
+.home p {
+  font-size: 1.1em;
+  color: #141e2b;
+  margin-top: 20px;
+  text-align: center;
+  max-width: 600px;
+}

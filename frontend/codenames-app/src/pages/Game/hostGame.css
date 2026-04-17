@@ -1,0 +1,38 @@
+.root-container {
+  width: 100vw;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4em;
+  font-family: "Cooper BT", "Cooper Black", "Bookman Old Style", serif;
+}
+
+.host-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+.host-game h1 {
+  font-size: 2.5em;
+  margin: 0;
+  color: #000;
+}
+
+.host-card {
+  width: 200px;
+  height: 50px;
+  background: #B6E1FC;
+  border-radius: 1em;
+  padding: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-padding {
+  padding-top: 10px;
+}
+
