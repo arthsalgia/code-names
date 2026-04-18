@@ -1,18 +1,23 @@
 import { useState } from 'react';
+import { Link } from "react-router-dom";
 import './hostGame.css'
 import './joinCards.css'
-import startGame from '../../apis/startGame' 
+import startGameApi from '../../apis/startGame';
+import addPlayerApi from '../../apis/addPlayer';
 
 export default function HostGame() {
   const [username, setUsername] = useState("");
   const [selected, setSelected] = useState({team: '', role: ''});
   
   const [error, setError] = useState(false);
-  const [apiError, setApiError] = useState(false)
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   
   const [gameId, setGameId] = useState(null);
   const [turn, setTurn] = useState(null);
+
+  const [hostId, setHostId] = useState(null);
+
 
   function handleJoin(team, role) {
     if (gameId) {
@@ -20,37 +25,44 @@ export default function HostGame() {
     }
     setSelected({ team, role });
   }
-  
-  function handleShowId(id) {
-    if (id){
-      
-    }
-    return null;
+
+  function copyToClip( text ) {
+    navigator.clipboard.writeText(text);
+    setCopied(true)
+    setTimeout(() => setCopied(false), 3000);
   }
   
-  async function showGame() {
-    if (!username.trim() || !selected.team) {
-      setError(true);
-      setTimeout(() => setError(false), 3000);
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const data = await startGame();
-      setGameId(data.gameId);
-      setTurn(data.turn);
-      console.log(data.gameId)
-      
-      
-    } catch (err) {
-      setApiError(true);
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+async function startGameHandler() {
+  if (!username.trim() || !selected.team) {
+    setError(true);
+    setTimeout(() => setError(false), 3000);
+    return;
   }
+
+  setLoading(true);
+
+  try {
+    const startData = await startGameApi();
+
+    setGameId(startData.gameId);
+    setTurn(startData.turn);
+
+    const playerId = await addPlayerApi({
+      name: username,
+      role: selected.role,
+      host: true,
+      team: selected.team,
+      gameId: startData.gameId
+    });
+
+    setHostId(playerId);
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+}
 
   
   return (
@@ -93,15 +105,31 @@ export default function HostGame() {
         
         {!gameId && !loading && (
           <div className='btn-padding'>
-          <button className="button" onClick={() => showGame()}>
-            <div>
-              <span>Start Game</span>
+            <button className="button" onClick={() => startGameHandler()}>
+              <div>
+                <span>Start Game</span>
+              </div>
+            </button>
+          </div>
+        )}
+        
+        {loading && <div className="loader"></div>}
+        
+        {gameId && !loading &&(
+          <div className='game-actions'>
+            <div className='copy-section'>
+              <div className='copy-text'>{copied ? "✅ Copied": "Click to copy game id"}</div>
+              <button className='game-id-button' onClick={() => copyToClip(gameId)}>
+                <div className='game-id-text'>{gameId}</div>
+              </button>
             </div>
-          </button>
-        </div>
+            <Link to={`/play-game/${gameId}`} className="play-button">
+              Play Game
+            </Link>
+          </div>
         )}
 
-        {loading && <div className="loader"></div>}
+
 
         </div>
 

@@ -1,5 +1,5 @@
 import './home.css'
-import StartGame from '../pages/Game/startGame';
+import StartGame from '../components/startGame';
 
 export default function Home() {
   return (

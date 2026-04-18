@@ -32,7 +32,87 @@
   align-items: center;
 }
 
-.btn-padding {
-  padding-top: 10px;
+.game-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5em;
+  margin-top: 10px;
 }
 
+.copy-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.game-id-button {
+  width: 200px;
+  height: 100px;
+  background: #a8d8f8;
+  border-radius: 3em;
+  border-color: #000000;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2em;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.game-id-button:hover {
+  background: #99d8ff;
+  cursor: pointer;
+}
+
+.game-id-button:active {
+  background: #5aa8d8;
+  transform: scale(0.95);
+}
+
+.copy-text {
+  position: absolute;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #263942;
+  gap: 0;
+}
+
+.game-id-text {
+  font-size: 2.5em;
+  letter-spacing: 1px;
+  color: #1d2e37;
+}
+
+.play-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 120px;
+  height: 50px;
+
+  background: #63b3ed;
+  border-radius: 2em;
+  border-color: #000;
+
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.play-button:hover {
+  filter: brightness(1.1);
+}
+
+.play-button:active {
+  transform: scale(0.95);
+}
