@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from ..engine import get_session
-from ..models.player import CreatePlayerData, CreatePlayerResponse, Role
+from ..models.player import CreatePlayerData, CreatePlayerResponse, Role, GetPlayerData
 from ..schemas.player import Player, TeamType
 
 from ..app import app
@@ -70,3 +70,31 @@ def add_player(player_data: CreatePlayerData):
         session.refresh(new_player)
 
         return {"id": new_player.id}
+    
+@app.post("/get-players")
+def get_players(game_data: GetPlayerData):
+    game_id = game_data.game_id
+
+    if not game_id:
+        raise HTTPException(
+           status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Must send game ID" 
+        )
+    with get_session() as session:
+        players_data = session.query(Player).filter_by(game_id=game_id).all()
+        
+        players = []
+
+        for player in players_data:
+            players.append({
+                "name": player.name,
+                "team": player.team.value,
+                "role": player.role.value,
+                "host": player.host
+            })
+        return players
+    
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail="Something unexpected occured"
+    )
