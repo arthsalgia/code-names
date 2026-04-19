@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Query
 from ..engine import get_session
 from ..models.player import CreatePlayerData, CreatePlayerResponse, Role, GetPlayerData
 from ..schemas.player import Player, TeamType
@@ -71,15 +71,9 @@ def add_player(player_data: CreatePlayerData):
 
         return {"id": new_player.id}
     
-@app.post("/get-players")
-def get_players(game_data: GetPlayerData):
-    game_id = game_data.game_id
+@app.get("/get-players")
+def get_players(game_id: str = Query(..., description="ID of the game")):
 
-    if not game_id:
-        raise HTTPException(
-           status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Must send game ID" 
-        )
     with get_session() as session:
         players_data = session.query(Player).filter_by(game_id=game_id).all()
         
