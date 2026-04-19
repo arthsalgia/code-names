@@ -81,6 +81,7 @@ def get_players(game_id: str = Query(..., description="ID of the game")):
 
         for player in players_data:
             players.append({
+                "id": player.id,
                 "name": player.name,
                 "team": player.team.value,
                 "role": player.role.value,
