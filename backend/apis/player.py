@@ -89,7 +89,4 @@ def get_players(game_id: str = Query(..., description="ID of the game")):
             })
         return players
     
-    raise HTTPException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail="Something unexpected occured"
-    )
+
