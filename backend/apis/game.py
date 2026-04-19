@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Query
 from ..services.board import create_board
 from ..services.words import get_words
 from ..services.turn import start_turn
@@ -34,4 +34,12 @@ def start_game():
 
         return {"game_id":game_id, "turn": turn}
 
-    
+@app.get("/game-exists")
+def game_exists(game_id: str = Query(..., description="ID of the game")):
+    with get_session() as session:
+
+        game = session.query(Game).filter_by(id=game_id).all()
+
+        if game:
+            return True
+        return False
