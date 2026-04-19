@@ -122,7 +122,7 @@ async function startGameHandler() {
                 <div className='game-id-text'>{gameId}</div>
               </button>
             </div>
-            <Link to={`/game/${gameId}`} className="play-button">
+            <Link to={`/join-game/${gameId}`} className="play-button">
               Play Game
             </Link>
           </div>
