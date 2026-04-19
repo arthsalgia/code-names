@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 import './hostGame.css'
-import './joinCards.css'
 import startGameApi from '../../apis/startGame';
 import addPlayerApi from '../../apis/addPlayer';
 
@@ -123,7 +122,7 @@ async function startGameHandler() {
                 <div className='game-id-text'>{gameId}</div>
               </button>
             </div>
-            <Link to={`/play-game/${gameId}`} className="play-button">
+            <Link to={`/game/${gameId}`} className="play-button">
               Play Game
             </Link>
           </div>
