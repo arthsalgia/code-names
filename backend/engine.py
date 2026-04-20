@@ -14,10 +14,18 @@ def create_db(db_url=None, create_schema=False):
     if not db_url:
         raise RuntimeError("DATABASE_URL is not set!")
 
+    connect_args = {}
+
+    if "sqlite" in db_url:
+        connect_args["check_same_thread"] = False
+
+    else:
+        connect_args["prepare_threshold"] = 0
+
     engine = create_engine(
         db_url,
         future=True,
-        connect_args={"check_same_thread": False} if "sqlite" in db_url else {}
+        connect_args=connect_args
     )
 
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)

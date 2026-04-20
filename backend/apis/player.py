@@ -8,8 +8,8 @@ from ..app import app
 @app.post("/add-player", response_model=CreatePlayerResponse)
 def add_player(player_data: CreatePlayerData):
     new_name = player_data.name
-    new_team = player_data.team
-    new_role = player_data.role
+    new_team = TeamType(player_data.team)
+    new_role = Role(player_data.role)
     new_host = player_data.host
     new_game_id = player_data.game_id
 
