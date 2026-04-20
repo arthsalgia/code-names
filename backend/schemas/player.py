@@ -30,9 +30,9 @@ class Player(Base):
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    team: Mapped[TeamType] = mapped_column(SQLEnum(TeamType), nullable=False, index=True)
+    team: Mapped[TeamType] = mapped_column(SQLEnum(TeamType), nullable=True, index=True)
 
-    role: Mapped[Role] = mapped_column(SQLEnum(Role), nullable=False, index=True)
+    role: Mapped[Role] = mapped_column(SQLEnum(Role), nullable=True, index=True)
 
     host: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
