@@ -1,19 +1,18 @@
 import { useState } from 'react';
 import { Link } from "react-router-dom";
-import './hostGame.css'
+import { useParams } from 'react-router-dom';
+import './startGame.css'
 import startGameApi from '../../apis/startGame';
 import addPlayerApi from '../../apis/addPlayer';
 
-export default function HostGame() {
+export default function StartGame() {
+  const { gameId } = useParams();
   const [username, setUsername] = useState("");
   const [selected, setSelected] = useState({team: '', role: ''});
   
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  
-  const [gameId, setGameId] = useState(null);
-  const [turn, setTurn] = useState(null);
 
   const [hostId, setHostId] = useState(null);
 
@@ -25,57 +24,53 @@ export default function HostGame() {
     setSelected({ team, role });
   }
 
-  function copyToClip( text ) {
-    navigator.clipboard.writeText(text);
+  function copyToClip( ID ) {
+    navigator.clipboard.writeText(ID);
     setCopied(true)
-    setTimeout(() => setCopied(false), 3000);
+    setTimeout(() => setCopied(false), 2000);
   }
   
-async function startGameHandler() {
-  if (!username.trim() || !selected.team) {
-    setError(true);
-    setTimeout(() => setError(false), 3000);
-    return;
+  async function handleJoinGame() {
+    if (!username.trim() || !selected.team) {
+      setError(true);
+      setTimeout(() => setError(false), 3000);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const playerId = await addPlayerApi({
+        name: username,
+        role: selected.role,
+        host: true,
+        team: selected.team,
+        gameId: gameId
+      });
+
+      setHostId(playerId);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
-
-  setLoading(true);
-
-  try {
-    const startData = await startGameApi();
-
-    setGameId(startData.gameId);
-    setTurn(startData.turn);
-
-    const playerId = await addPlayerApi({
-      name: username,
-      role: selected.role,
-      host: true,
-      team: selected.team,
-      gameId: startData.gameId
-    });
-
-    setHostId(playerId);
-
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-}
 
   
   return (
-    <div className={`root-container ${loading || !!gameId ? "locked" : ""}`}>
+    <div className={`root-container ${loading ? "locked" : ""}`}>
 
       <div className='team-column'>
         <h2 className='team-title red-title'>Red Team</h2>
         <div className='team-card red-card'>
-          <span>Spymaster</span>
+          <div className='team-card-name-text'><span>luciana</span></div>
           <button className= {`join-btn ${selected.role === 'spymaster_red' ? "joined" : "red-btn"}`} 
             onClick={() => handleJoin('red', 'spymaster_red')}
           >
             {selected.role === 'spymaster_red' ? 'Joined' : 'Join'}
           </button>
+          <div className='team-card-role-text'><span>Spymaster</span></div>
         </div>
         <div className='team-card red-card'>
           <span>Operative</span>
@@ -87,9 +82,9 @@ async function startGameHandler() {
         </div>
       </div>
 
-      <div className="host-game">  
-        <h1>Host new game</h1>
-        <div className="host-card">
+      <div className="start-game">  
+        <h1>Join game</h1>
+        <div className="start-card">
           <div className="input-container">
             <input
               type="text"
@@ -102,23 +97,16 @@ async function startGameHandler() {
           </div>
         </div>
         
-        {!gameId && !loading && (
-          <div className='btn-padding'>
-            <button className="button" onClick={() => startGameHandler()}>
-              <div>
-                <span>Start Game</span>
-              </div>
-            </button>
-          </div>
-        )}
-        
         {loading && <div className="loader"></div>}
         
         {gameId && !loading &&(
           <div className='game-actions'>
             <div className='copy-section'>
-              <div className='copy-text'>{copied ? "✅ Copied": "Click to copy game id"}</div>
-              <button className='game-id-button' onClick={() => copyToClip(gameId)}>
+              <div className={'copy-label'}>
+                {copied ? "✅ Copied!" : "Click to copy game id"}
+              </div>
+
+              <button className={`game-id-button ${copied ? 'copied' : ''}`}onClick={() => copyToClip(gameId)}>
                 <div className='game-id-text'>{gameId}</div>
               </button>
             </div>
@@ -127,9 +115,6 @@ async function startGameHandler() {
             </Link>
           </div>
         )}
-
-
-
         </div>
 
       <div className='team-column'>

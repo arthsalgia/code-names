@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import './startGame.css'
+import './homeButtons.css'
 
-export default function StartGame() {
+export default function HomeButtons() {
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
 
   return (
-    <div className="startGame-container">
+    <div className="container">
       {!showOptions && (
         <button className="button" onClick={() => setShowOptions(true)}>
           <div><span>Play</span></div>
@@ -15,14 +15,15 @@ export default function StartGame() {
       )}
 
       {showOptions && (
-        <div className="startGame-buttons">
-          <button className="button" onClick={() => navigate("/host-game")}>
-            <div><span>Host Game</span></div>
+        <div className="home-buttons">
+          <button className="button" onClick={() => navigate("/setup-game")}>
+            <div><span>Start Game</span></div>
           </button>
           <button className="button" onClick={() => navigate("/join-game")}>
             <div><span>Join Game</span></div>
           </button>
         </div>
+
       )}
     </div>
   );

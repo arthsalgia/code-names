@@ -8,20 +8,20 @@
   font-family: "Cooper BT", "Cooper Black", "Bookman Old Style", serif;
 }
 
-.host-game {
+.start-game {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1em;
 }
 
-.host-game h1 {
+.start-game h1 {
   font-size: 2.5em;
   margin: 0;
   color: #000;
 }
 
-.host-card {
+.start-card {
   width: 200px;
   height: 50px;
   background: #B6E1FC;
@@ -72,19 +72,27 @@
   transform: scale(0.95);
 }
 
-.copy-text {
-  position: absolute;
-  padding: 10px;
-  text-align: center;
-  font-size: 0.9em;
-  color: #263942;
-  gap: 0;
+
+.game-id-button.copied {
+  border: 2px solid #35d881;
 }
 
 .game-id-text {
   font-size: 2.5em;
   letter-spacing: 1px;
   color: #1d2e37;
+  transition: color 0.2s ease;
+}
+
+.game-id-text.copied {
+  color: #38a169;
+}
+
+.copy-label {
+  font-size: 0.9em;
+  color: #263942;
+  height: 20px; 
+  transition: color 0.2s ease;
 }
 
 .play-button {
@@ -134,19 +142,35 @@
 
 .team-card {
   width: 200px;
-  height: 75px;
+  height: 120px;
+
   border-radius: 1em;
-  padding: 1em 1.5em;
-  padding-top: 1.5em;
+  padding: 1em;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.8em;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-  font-size: 0.95em;
-  font-weight: 600;
+
+  justify-content: space-between;
+
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
   text-align: center;
-  color: #000;
+}
+
+.team-card-name-text {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.15em;
+  font-weight: 600;
+  color: #131e2d;
+
+  line-height: 1.3;
+  flex-shrink: 0;
+}
+
+.team-card-role-text {
+  font-size: 1em;
+  color: #666;
+  letter-spacing: 0.5px;
 }
 
 .red-card { background: #fed7d7; }

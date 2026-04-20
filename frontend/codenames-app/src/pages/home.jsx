@@ -1,5 +1,5 @@
 import './home.css'
-import StartGame from '../components/startGame';
+import HomeButtons from '../components/homeButtons';
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
       <h1>Code Names</h1>
       <p>A fun word guessing game</p>
       <div className='home-buttons'>
-        <StartGame/>
+        <HomeButtons/>
       </div>
     </div>
   );
