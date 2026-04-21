@@ -16,6 +16,3 @@ class CreatePlayerData(BaseModel):
 class CreatePlayerResponse(BaseModel):
     id : int
 
-class GetPlayerData(BaseModel):
-    game_id: str
-

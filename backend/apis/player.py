@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status, Query
 from ..engine import get_session
-from ..models.player import CreatePlayerData, CreatePlayerResponse, Role, GetPlayerData
+from ..models.player import CreatePlayerData, CreatePlayerResponse, Role
 from ..schemas.player import Player, TeamType
 
 from ..app import app
@@ -89,4 +89,25 @@ def get_players(game_id: str = Query(..., description="ID of the game")):
             })
         return players
     
+@app.get("/games/{game_id}/players/{player_id}")
+def get_player(game_id: str, player_id: int):
+    with get_session() as session:
+        res = session.query(Player).filter_by(id=player_id, game_id=game_id).first()
 
+        if not res:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Player with this id doesnt not exist for this game"
+            )
+        
+        player_data = {
+            "name": res.name,
+            "team": res.team.value,
+            "role": res.role.value,
+            "host": res.host,
+        }
+
+    return player_data
+ 
+
+    
