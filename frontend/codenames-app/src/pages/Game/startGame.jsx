@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import './startGame.css'
-import startGameApi from '../../apis/startGame';
 import addPlayerApi from '../../apis/addPlayer';
 
 export default function StartGame() {
@@ -13,8 +12,8 @@ export default function StartGame() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  const [hostId, setHostId] = useState(null);
+  
+  const playerId = localStorage.getItem("playerId") | null;
 
 
   function handleJoin(team, role) {
@@ -22,12 +21,6 @@ export default function StartGame() {
       return;
     }
     setSelected({ team, role });
-  }
-
-  function copyToClip( ID ) {
-    navigator.clipboard.writeText(ID);
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000);
   }
   
   async function handleJoinGame() {
@@ -48,7 +41,9 @@ export default function StartGame() {
         gameId: gameId
       });
 
-      setHostId(playerId);
+      if (!playerId) {
+        localStorage.setItem("playerId", playerId);
+      }
 
     } catch (err) {
       console.error(err);

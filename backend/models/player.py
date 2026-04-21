@@ -8,10 +8,10 @@ class Player(BaseModel):
 
 class CreatePlayerData(BaseModel):
     name : str
-    role : Role
-    host : bool
-    team : TeamType
-    game_id : str | None = None
+    role : Role | None = None
+    host : bool = False
+    team : TeamType | None = None
+    game_id : str
 
 class CreatePlayerResponse(BaseModel):
     id : int

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import startGameApi from '../../apis/startGame';
 import addPlayerApi from '../../apis/addPlayer';
+import { Link } from "react-router-dom";
 import "./setupGame.css"
 
 
@@ -12,6 +13,13 @@ export default function setupGame() {
   const [hostId, setHostId] = useState(null);
   const [hostName, setHostName] = useState('');
   const [error, setError] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  function copyToClip( ID ) {
+    navigator.clipboard.writeText(ID);
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000);
+  }
   
   async function startGameHandler() {
     if (!hostName) {
@@ -31,12 +39,12 @@ export default function setupGame() {
         role: null,
         host: true,
         team: null,
-        gameId: gameId
+        gameId: startData.gameId
       });
 
       setHostId(addPlayerData.id);
 
-      localStorage.setItem("hostId", hostId);
+      localStorage.setItem("playerId", hostId);
     } catch (err) {
       console.error(err);
     } finally {
@@ -48,18 +56,20 @@ export default function setupGame() {
     <div className="root-container">
       <div className="start-game">  
         <h1>Start new game</h1>
-        <div className="start-card">
-          <div className="input-container">
-            <input
-              type="text"
-              value={hostName}
-              onChange={(e) => setHostName(e.target.value)}
-              required
-              />
-            <label className="label">Username</label>
-            <div className="underline"></div>
+        {!gameId && (
+          <div className="start-card">
+            <div className="input-container">
+              <input
+                type="text"
+                value={hostName}
+                onChange={(e) => setHostName(e.target.value)}
+                required
+                />
+              <label className="label">Username</label>
+              <div className="underline"></div>
+            </div>
           </div>
-        </div>
+        )}
         {!gameId && !loading && (
           <button className="button" onClick={() => startGameHandler()}>
             <div><span>Create Game</span></div>
@@ -79,8 +89,8 @@ export default function setupGame() {
                 <div className='game-id-text'>{gameId}</div>
               </button>
             </div>
-            <Link to={`/join-game/${gameId}`} className="play-button">
-              Play Game
+            <Link to={`/start-game/${gameId}`} className="play-button">
+              Join Game
             </Link>
           </div>
         )}

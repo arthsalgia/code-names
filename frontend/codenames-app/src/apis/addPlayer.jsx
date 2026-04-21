@@ -14,5 +14,10 @@ export default async function addPlayer({name, role, host, team, gameId}) {
   });
   
   const data = await res.json();
+  
+  if (!res.ok) {
+    throw new Error(data.detail || "Failed to add player");
+  }
+  
   return data.id // added player id
 }
