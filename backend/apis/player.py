@@ -96,7 +96,7 @@ def get_player(game_id: str, player_id: int):
 
         if not res:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_404_NOT_FOUND,
                 detail="Player with this id doesnt not exist for this game"
             )
         
