@@ -1,20 +1,27 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import './startGame.css'
 import addPlayerApi from '../../apis/addPlayer';
+import getPlayer from '../../apis/getPlayer';
+import getPlayers from '../../apis/getPlayers';
 
 export default function StartGame() {
   const { gameId } = useParams();
   const [username, setUsername] = useState("");
   const [selected, setSelected] = useState({team: '', role: ''});
-  
+
+  const navigate = useNavigate();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
-  
-  const playerId = localStorage.getItem("playerId") | null;
+  const [isHost, setIsHost] = useState(false);
+  const [playerId, setPlayerId] = useState(() => localStorage.getItem("playerId"));
 
+  function GoToGame() {
+    navigate(`/play-game/${gameId}`);
+  }
 
   function handleJoin(team, role) {
     if (gameId) {
@@ -36,14 +43,12 @@ export default function StartGame() {
       const playerId = await addPlayerApi({
         name: username,
         role: selected.role,
-        host: true,
+        host: false,
         team: selected.team,
         gameId: gameId
       });
 
-      if (!playerId) {
-        localStorage.setItem("playerId", playerId);
-      }
+      localStorage.setItem("playerId", playerId);
 
     } catch (err) {
       console.error(err);
@@ -51,6 +56,21 @@ export default function StartGame() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    async function checkHost() {
+      if (!playerId || !gameId) return;
+
+      try {
+        const player = await getPlayer(gameId, playerId);
+        setIsHost(player.host === true);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    checkHost();
+  }, [gameId, playerId]);
 
   
   return (
@@ -79,8 +99,10 @@ export default function StartGame() {
 
       <div className="start-game">  
         <h1>Join game</h1>
+
+      {!isHost && (
         <div className="start-card">
-          <div className="input-container">
+          {!isHost && (<div className="input-container">
             <input
               type="text"
               value={username}
@@ -89,28 +111,18 @@ export default function StartGame() {
               />
             <label className="label">Username</label>
             <div className="underline"></div>
-          </div>
-        </div>
+          </div>)}
+        </div>)}
         
+        {isHost && (
+          <button className='button' onClick={() => GoToGame()}>
+            <div className='game-id-text'>{gameId}</div>
+          </button>
+        )}
+
         {loading && <div className="loader"></div>}
         
-        {gameId && !loading &&(
-          <div className='game-actions'>
-            <div className='copy-section'>
-              <div className={'copy-label'}>
-                {copied ? "✅ Copied!" : "Click to copy game id"}
-              </div>
-
-              <button className={`game-id-button ${copied ? 'copied' : ''}`}onClick={() => copyToClip(gameId)}>
-                <div className='game-id-text'>{gameId}</div>
-              </button>
-            </div>
-            <Link to={`/join-game/${gameId}`} className="play-button">
-              Play Game
-            </Link>
-          </div>
-        )}
-        </div>
+      </div>
 
       <div className='team-column'>
         <h2 className='team-title blue-title'>Blue Team</h2>

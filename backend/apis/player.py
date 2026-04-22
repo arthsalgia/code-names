@@ -89,7 +89,7 @@ def get_players(game_id: str = Query(..., description="ID of the game")):
             })
         return players
     
-@app.get("/games/{game_id}/players/{player_id}")
+@app.get("/games/{game_id}/player/{player_id}")
 def get_player(game_id: str, player_id: int):
     with get_session() as session:
         res = session.query(Player).filter_by(id=player_id, game_id=game_id).first()
@@ -102,8 +102,8 @@ def get_player(game_id: str, player_id: int):
         
         player_data = {
             "name": res.name,
-            "team": res.team.value,
-            "role": res.role.value,
+            "team": res.team.value if res.team else None,
+            "role": res.role.value if res.role else None,
             "host": res.host,
         }
 

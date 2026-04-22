@@ -42,9 +42,9 @@ export default function setupGame() {
         gameId: startData.gameId
       });
 
-      setHostId(addPlayerData.id);
+      setHostId(addPlayerData);
+      localStorage.setItem("playerId", addPlayerData);
 
-      localStorage.setItem("playerId", hostId);
     } catch (err) {
       console.error(err);
     } finally {
