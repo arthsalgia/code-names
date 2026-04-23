@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import './startGame.css'
 import addPlayerApi from '../../apis/addPlayer';
-import getPlayer from '../../apis/getPlayer';
-import getPlayers from '../../apis/getPlayers';
+import getPlayerApi from '../../apis/getPlayer';
+import getAllPlayersApi from '../../apis/getPlayers';
 
 export default function StartGame() {
   const { gameId } = useParams();
@@ -15,19 +15,26 @@ export default function StartGame() {
 
   const navigate = useNavigate();
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [isHost, setIsHost] = useState(false);
-  const [playerId, setPlayerId] = useState(() => localStorage.getItem("playerId"));
+  const [players, setPlayers] = useState([]);
+  const [playerId, setPlayerId] = useState(() => localStorage.getItem(`playerId_${gameId}`));
+
+  const [addPlayerLoading, setAddPlayerLoading] = useState(false);
+  const [getPlayerLoading, setGetPlayerLoading] = useState(false);
 
   function GoToGame() {
     navigate(`/play-game/${gameId}`);
   }
 
   function handleJoin(team, role) {
-    if (gameId) {
+    if (!gameId) {
       return;
     }
     setSelected({ team, role });
+  } 
+
+  function getPlayer(team, role) {
+    return players.find(p => p.team === team && p.role === role);
   }
   
   async function handleJoinGame() {
@@ -37,7 +44,7 @@ export default function StartGame() {
       return;
     }
 
-    setLoading(true);
+    setAddPlayerLoading(true);
 
     try {
       const playerId = await addPlayerApi({
@@ -48,38 +55,70 @@ export default function StartGame() {
         gameId: gameId
       });
 
-      localStorage.setItem("playerId", playerId);
+      localStorage.setItem(`playerId_${gameId}`, playerId);
+      setPlayerId(playerId);
 
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setAddPlayerLoading(false);
     }
   }
 
   useEffect(() => {
     async function checkHost() {
-      if (!playerId || !gameId) return;
+      if (!gameId) return;
+
+      const playerId = localStorage.getItem(`playerId_${gameId}`);
+
+      if (!playerId) return;
+
+      setGetPlayerLoading(true);
 
       try {
-        const player = await getPlayer(gameId, playerId);
+        const player = await getPlayerApi(gameId, playerId);
         setIsHost(player.host === true);
       } catch (err) {
-        console.error(err);
+          console.error(err);
+      } finally {
+          setGetPlayerLoading(false);
       }
     }
 
     checkHost();
-  }, [gameId, playerId]);
+  }, [gameId]);
+
+  useEffect(() => {
+    async function fetchPlayers() {
+      if (!gameId) return;
+
+      const interval = setInterval(async () => {
+      const playersData = await getAllPlayersApi(gameId);
+      const formatted = playersData.map(player => ({
+        id: player.id,
+        name: player.name,
+        role: player.role,
+        team: player.team,
+        host: player.host
+      }));
+      setPlayers(formatted);
+      }, 2000);
+    
+    return () => clearInterval(interval);
+
+    }
+
+    fetchPlayers();
+  }, [gameId]);
 
   
   return (
-    <div className={`root-container ${loading ? "locked" : ""}`}>
+    <div className={`root-container ${addPlayerLoading || getPlayerLoading ? "locked" : ""}`}>
 
       <div className='team-column'>
         <h2 className='team-title red-title'>Red Team</h2>
         <div className='team-card red-card'>
-          <div className='team-card-name-text'><span>luciana</span></div>
+          <div className='team-card-name-text'><span>{getPlayer('red', 'spymaster_red')?.name || ''}</span></div>
           <button className= {`join-btn ${selected.role === 'spymaster_red' ? "joined" : "red-btn"}`} 
             onClick={() => handleJoin('red', 'spymaster_red')}
           >
@@ -88,59 +127,68 @@ export default function StartGame() {
           <div className='team-card-role-text'><span>Spymaster</span></div>
         </div>
         <div className='team-card red-card'>
-          <span>Operative</span>
+          <div className='team-card-name-text'><span>{getPlayer('red', 'operative_red')?.name || ''}</span></div>
           <button className= {`join-btn ${selected.role === 'operative_red' ? "joined" : "red-btn"}`} 
             onClick={() => handleJoin('red', 'operative_red')}
           >
             {selected.role === 'operative_red' ? 'Joined' : 'Join'}
           </button>
+          <div className='team-card-role-text'><span>Operative</span></div>
         </div>
       </div>
 
       <div className="start-game">  
         <h1>Join game</h1>
 
-      {!isHost && (
-        <div className="start-card">
-          {!isHost && (<div className="input-container">
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              />
-            <label className="label">Username</label>
-            <div className="underline"></div>
+        {!isHost && (
+          <div className="start-card">
+            <div className="input-container">
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                />
+              <label className="label">Username</label>
+              <div className="underline"></div>
+            </div>
           </div>)}
-        </div>)}
-        
+
+        {!isHost && (
+          <button className='button' onClick={() => handleJoinGame()}>
+            <div><span>Join Game</span></div>
+          </button>
+        )}
+          
         {isHost && (
           <button className='button' onClick={() => GoToGame()}>
-            <div className='game-id-text'>{gameId}</div>
+            <div><span>Play game</span></div>
           </button>
         )}
 
-        {loading && <div className="loader"></div>}
+        {addPlayerLoading || getPlayerLoading && <div className="loader"></div>}
         
       </div>
 
       <div className='team-column'>
         <h2 className='team-title blue-title'>Blue Team</h2>
         <div className='team-card blue-card'>
-          <span>Spymaster</span>
+          <div className='team-card-name-text'><span>{getPlayer('blue', 'spymaster_blue')?.name || ''}</span></div>
           <button className= {`join-btn ${selected.role === 'spymaster_blue' ? "joined" : "blue-btn"}`} 
             onClick={() => handleJoin('blue', 'spymaster_blue')}
           >
             {selected.role === 'spymaster_blue' ? 'Joined' : 'Join'}
           </button>
+          <div className='team-card-role-text'><span>Spymaster</span></div>
         </div>
         <div className='team-card blue-card'>
-          <span>Operative</span>
+          <div className='team-card-name-text'><span>{getPlayer('blue', 'operative_blue')?.name || ''}</span></div>
           <button className= {`join-btn ${selected.role === 'operative_blue' ? "joined" : "blue-btn"}`} 
             onClick={() => handleJoin('blue', 'operative_blue')}
           >
             {selected.role === 'operative_blue' ? 'Joined' : 'Join'}
           </button>
+          <div className='team-card-role-text'><span>Operative</span></div>
         </div>
       </div>
         

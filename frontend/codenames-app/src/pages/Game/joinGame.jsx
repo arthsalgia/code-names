@@ -36,7 +36,7 @@ export default function GoToGame() {
       <div className="game-actions">  
         <h1>Join Game</h1>
         {!gameExists && (
-          <div className="input-card">
+          <div className="start-card">
             <div className="input-container">
               <input
                 type="text"

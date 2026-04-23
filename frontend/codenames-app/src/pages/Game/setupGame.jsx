@@ -14,6 +14,7 @@ export default function setupGame() {
   const [hostName, setHostName] = useState('');
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [ready, setReady] = useState(false);
 
   function copyToClip( ID ) {
     navigator.clipboard.writeText(ID);
@@ -34,7 +35,7 @@ export default function setupGame() {
       setGameId(startData.gameId);
       setTurn(startData.turn);
 
-      const addPlayerData = await addPlayerApi({
+      const addPlayerId = await addPlayerApi({
         name: hostName,
         role: null,
         host: true,
@@ -42,8 +43,9 @@ export default function setupGame() {
         gameId: startData.gameId
       });
 
-      setHostId(addPlayerData);
-      localStorage.setItem("playerId", addPlayerData);
+      setHostId(addPlayerId);
+      localStorage.setItem(`playerId_${startData.gameId}`, addPlayerId);
+      setReady(true);
 
     } catch (err) {
       console.error(err);
@@ -89,9 +91,12 @@ export default function setupGame() {
                 <div className='game-id-text'>{gameId}</div>
               </button>
             </div>
-            <Link to={`/start-game/${gameId}`} className="play-button">
-              Join Game
-            </Link>
+            {ready && (
+              <Link to={`/start-game/${gameId}`} className="play-button">
+                Join Game
+              </Link>
+            )}
+            
           </div>
         )}
 
