@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker 
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool 
 from contextlib import contextmanager
 from .base import Base
 
@@ -19,14 +20,11 @@ def create_db(db_url=None, create_schema=False):
     if "sqlite" in db_url:
         connect_args["check_same_thread"] = False
 
-    else:
-        connect_args["prepare_threshold"] = 0
-
     engine = create_engine(
         db_url,
         future=True,
         connect_args=connect_args,
-        pool_pre_ping=True
+        poolclass=NullPool,
     )
 
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
