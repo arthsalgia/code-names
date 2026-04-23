@@ -25,7 +25,8 @@ def create_db(db_url=None, create_schema=False):
     engine = create_engine(
         db_url,
         future=True,
-        connect_args=connect_args
+        connect_args=connect_args,
+        pool_pre_ping=True
     )
 
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
