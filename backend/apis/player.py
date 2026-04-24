@@ -70,9 +70,22 @@ async def add_player(player_data: CreatePlayerData):
         session.commit()
         session.refresh(new_player)
 
+        players = session.query(Player).filter_by(game_id=new_game_id).all()
+
+        payload = [
+            {
+                "id": p.id,
+                "name": p.name,
+                "team": p.team.value if p.team else None,
+                "role": p.role.value if p.role else None,
+                "host": p.host
+            }
+            for p in players
+        ]
+
         await manager.broadcast(new_game_id, {
             "type": "PLAYERS_UPDATE",
-            "payload": new_player.id
+            "payload": payload
         })
 
         return {"id": new_player.id}
