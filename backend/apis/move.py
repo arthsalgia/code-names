@@ -6,18 +6,19 @@ from ..schemas.game import Game
 from ..schemas.player import Role
 from ..schemas.team import TeamType
 from ..services.end_game import end_game
-from .turn import current_turn
+from ..services.curr_turn import current_turn
 from ..services.turn import get_next_turn
 from ..engine import get_session
+from ..core.connection_manager import manager
 
 @app.post("/make-guess", response_model=PostMoveResponse)
-def make_guess(guess: PostMove):
+async def make_guess(guess: PostMove):
     team = TeamType(guess.team)
     word = guess.word.lower()
     role = guess.role
     game_id = guess.game_id
 
-    curr_turn = current_turn(game_id)["turn"]
+    curr_turn = TeamType(current_turn(game_id))
     
     next_turn = get_next_turn(curr_turn)
 
@@ -65,9 +66,16 @@ def make_guess(guess: PostMove):
         game.turn = next_turn
         session.commit()
     
-    return {
+    payload = {
         "turn" : next_turn,
         "guessed" : guessed,
         "winner" : winner
             }
+    
+    await manager.broadcast(game_id, {
+        "type": "GUESS",
+        "payload": payload
+    })
+    
+    return payload
 

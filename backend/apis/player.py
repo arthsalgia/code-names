@@ -1,12 +1,13 @@
+import json
 from fastapi import HTTPException, status, Query
 from ..engine import get_session
 from ..models.player import CreatePlayerData, CreatePlayerResponse, Role
 from ..schemas.player import Player, TeamType
-
+from ..core.connection_manager import manager
 from ..app import app
 
 @app.post("/add-player", response_model=CreatePlayerResponse)
-def add_player(player_data: CreatePlayerData):
+async def add_player(player_data: CreatePlayerData):
     new_name = player_data.name
     new_team = TeamType(player_data.team) if player_data.team else None
     new_role = Role(player_data.role) if player_data.role else None
@@ -68,6 +69,11 @@ def add_player(player_data: CreatePlayerData):
         session.add(new_player)
         session.commit()
         session.refresh(new_player)
+
+        await manager.broadcast(new_game_id, {
+            "type": "PLAYERS_UPDATE",
+            "payload": new_player.id
+        })
 
         return {"id": new_player.id}
     
