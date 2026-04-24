@@ -23,6 +23,7 @@ export default function StartGame() {
   const [getPlayerLoading, setGetPlayerLoading] = useState(false);
 
   const [currPlayerJoined, setCurrPlayerJoined] = useState(false);
+  const [hostJoined, setHostJoined] = useState(false);
 
   function GoToGame() {
     navigate(`/play-game/${gameId}`);
@@ -40,6 +41,10 @@ export default function StartGame() {
     return players.find(p => p.team === team && p.role === role);
   }
   
+  async function handleHostJoinGame() {
+
+  }
+
   async function handleJoinGame() {
     if (!username.trim() || !selected.team) {
       setError(true);
@@ -92,27 +97,30 @@ export default function StartGame() {
   }, [gameId]);
 
   useEffect(() => {
-    async function fetchPlayers() {
-      if (!gameId) return;
+    if (!gameId) return;
 
-      const interval = setInterval(async () => {
-      const playersData = await getAllPlayersApi(gameId);
-      const formatted = playersData.map(player => ({
-        id: player.id,
-        name: player.name,
-        role: player.role,
-        team: player.team,
-        host: player.host
-      }));
-      setPlayers(formatted);
-      }, 2000);
-    
-    return () => clearInterval(interval);
+    const ws = new WebSocket(`ws://localhost:8000/ws/${gameId}`);
 
-    }
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
 
-    fetchPlayers();
-  }, [gameId]);
+      switch (data.type) {
+        case "PLAYERS_UPDATE":
+          const formatted = data.payload.map(player => ({
+            id: player.id,
+            name: player.name,
+            role: player.role,
+            team: player.team,
+            host: player.host
+          }));
+
+          setPlayers(formatted);
+          break;
+      }
+    };
+
+    return () => ws.close();
+}, [gameId]);
 
   
   return (
@@ -167,16 +175,16 @@ export default function StartGame() {
           </button>
         )}
           
-        {isHost && (
-          <div>
-            <button className='button' onClick={() => handleJoinGame()}>
-              <div><span>Join Game</span></div>
-            </button>
+        {isHost && !hostJoined && (
+          <button className='button' onClick={() => handleHostJoinGame()}>
+            <div><span>Join Game</span></div>
+          </button>
+        )}
 
-            <button className='button' onClick={() => GoToGame()}>
-              <div><span>Play game</span></div>
-            </button>
-          </div>
+        {isHost && (
+          <button className='button' onClick={() => GoToGame()}>
+            <div><span>Play game</span></div>
+          </button>
         )}
 
         {(addPlayerLoading || getPlayerLoading) && <div className="loader"></div>}
