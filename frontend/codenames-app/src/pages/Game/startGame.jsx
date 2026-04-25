@@ -7,6 +7,7 @@ import './startGame.css'
 import addPlayerApi from '../../apis/addPlayer';
 import getPlayerApi from '../../apis/getPlayer';
 import getAllPlayersApi from '../../apis/getPlayers';
+import updateHostApi from '../../apis/updateHost';
 
 export default function StartGame() {
   const { gameId } = useParams();
@@ -44,10 +45,13 @@ export default function StartGame() {
     if (!selected.team || !selected.role) return;
 
     try {
-      await updatePlayerApi(gameId, playerId, {
-        team: selected.team,
-        role: selected.role
-      });
+      await updateHostApi({
+      id: playerId,
+      team: selected.team,
+      role: selected.role,
+      gameId: gameId
+    });
+
 
       setHostJoined(true);
     } catch (err) {
