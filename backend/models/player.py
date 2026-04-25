@@ -16,3 +16,8 @@ class CreatePlayerData(BaseModel):
 class CreatePlayerResponse(BaseModel):
     id : int
 
+class UpdateHost(BaseModel):
+    id : int
+    role : Role
+    team : TeamType
+    game_id : str

@@ -1,7 +1,7 @@
 import json
 from fastapi import HTTPException, status, Query
 from ..engine import get_session
-from ..models.player import CreatePlayerData, CreatePlayerResponse, Role
+from ..models.player import CreatePlayerData, CreatePlayerResponse, Role, UpdateHost
 from ..schemas.player import Player, TeamType
 from ..core.connection_manager import manager
 from ..app import app
@@ -128,5 +128,40 @@ def get_player(game_id: str, player_id: int):
 
     return player_data
  
+@app.post("update/host")
+async def update_host(player_data: UpdateHost):
+    p_id = player_data.id
+    p_game_id = player_data.game_id
+    p_role = Role(player_data.role)
+    p_team = TeamType(player_data.team)
 
+    with get_session() as session:
+        player = session.query(Player).filter_by(
+            id=p_id,
+            game_id=p_game_id
+        ).first()
+
+        if not player:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found")
     
+        player.team = p_team
+        player.role = p_role
+        
+        session.commit()
+        session.refresh(player)
+
+        payload = {
+                "id": player.id,
+                "name": player.name,
+                "team": player.team.value,
+                "role": player.role.value,
+                "host": player.host,
+                "game_id": p_game_id
+            }
+
+        await manager.broadcast(p_game_id, {
+            "type": "HOST_UPDATE",
+            "payload": payload
+        })
+
+        return payload
