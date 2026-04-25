@@ -128,7 +128,7 @@ def get_player(game_id: str, player_id: int):
 
     return player_data
  
-@app.post("update-host")
+@app.post("/update-host")
 async def update_host(player_data: UpdateHost):
     p_id = player_data.id
     p_game_id = player_data.game_id
