@@ -1,5 +1,5 @@
 export default async function updateHost({id, role, team, gameId}) {
-  const res = await fetch("https://arthsalgia-codenames.onrender.com/update/host", {
+  const res = await fetch("https://arthsalgia-codenames.onrender.com/update-host", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

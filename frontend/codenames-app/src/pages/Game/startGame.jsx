@@ -113,7 +113,7 @@ export default function StartGame() {
   useEffect(() => {
     if (!gameId) return;
 
-    const ws = new WebSocket(`ws://localhost:8000/ws/${gameId}`);
+    const ws = new WebSocket(`wss://arthsalgia-codenames.onrender.com/ws/${gameId}`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -158,7 +158,7 @@ export default function StartGame() {
         <h2 className='team-title red-title'>Red Team</h2>
         <div className='team-card red-card'>
           <div className='team-card-name-text'><span>{getPlayer('red', 'spymaster_red')?.name || ''}</span></div>
-          {!getPlayer('red', 'spymaster_red') && !currPlayerJoined && !hostJoined && (
+          {!getPlayer('red', 'spymaster_red') && (
             <button className= {`join-btn ${selected.role === 'spymaster_red' ? "joined" : "red-btn"}`} 
               onClick={() => handleJoin('red', 'spymaster_red')}
             >
@@ -169,7 +169,7 @@ export default function StartGame() {
         </div>
         <div className='team-card red-card'>
           <div className='team-card-name-text'><span>{getPlayer('red', 'operative_red')?.name || ''}</span></div>
-          {!getPlayer('red', 'operative_red') && !currPlayerJoined && !hostJoined && (
+          {!getPlayer('red', 'operative_red') && (
             <button className= {`join-btn ${selected.role === 'operative_red' ? "joined" : "red-btn"}`} 
               onClick={() => handleJoin('red', 'operative_red')}
             >
@@ -223,7 +223,7 @@ export default function StartGame() {
         <h2 className='team-title blue-title'>Blue Team</h2>
         <div className='team-card blue-card'>
           <div className='team-card-name-text'><span>{getPlayer('blue', 'spymaster_blue')?.name || ''}</span></div>
-          {!getPlayer('blue', 'spymaster_blue') && !currPlayerJoined && !hostJoined && (
+          {!getPlayer('blue', 'spymaster_blue') && (
             <button className= {`join-btn ${selected.role === 'spymaster_blue' ? "joined" : "blue-btn"}`} 
               onClick={() => handleJoin('blue', 'spymaster_blue')}
               >
@@ -234,7 +234,7 @@ export default function StartGame() {
         </div>
         <div className='team-card blue-card'>
           <div className='team-card-name-text'><span>{getPlayer('blue', 'operative_blue')?.name || ''}</span></div>
-          {!getPlayer('blue', 'operative_blue') && !currPlayerJoined && !hostJoined && (
+          {!getPlayer('blue', 'operative_blue') && (
             <button className= {`join-btn ${selected.role === 'operative_blue' ? "joined" : "blue-btn"}`} 
               onClick={() => handleJoin('blue', 'operative_blue')}
               >
