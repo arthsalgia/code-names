@@ -84,7 +84,7 @@ async def add_player(player_data: CreatePlayerData):
         ]
 
         await manager.broadcast(new_game_id, {
-            "type": "PLAYERS_UPDATE",
+            "type": "PLAYERS_ADD",
             "payload": payload
         })
 

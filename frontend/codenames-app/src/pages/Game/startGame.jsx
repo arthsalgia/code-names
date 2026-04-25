@@ -115,7 +115,7 @@ export default function StartGame() {
       const data = JSON.parse(event.data);
 
       switch (data.type) {
-        case "PLAYERS_UPDATE":
+        case "PLAYERS_ADD":
           const formatted = data.payload.map(player => ({
             id: player.id,
             name: player.name,
