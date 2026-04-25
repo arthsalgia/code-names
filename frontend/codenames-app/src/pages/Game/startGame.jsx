@@ -30,9 +30,8 @@ export default function StartGame() {
   }
 
   function handleJoin(team, role) {
-    if (!gameId) {
-      return;
-    }
+    if (!gameId) return;
+    
     setSelected({ team, role });
     setCurrPlayerJoined(true);
   } 
@@ -42,7 +41,18 @@ export default function StartGame() {
   }
   
   async function handleHostJoinGame() {
+    if (!selected.team || !selected.role) return;
 
+    try {
+      await updatePlayerApi(gameId, playerId, {
+        team: selected.team,
+        role: selected.role
+      });
+
+      setHostJoined(true);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async function handleJoinGame() {
@@ -116,7 +126,21 @@ export default function StartGame() {
 
           setPlayers(formatted);
           break;
-      }
+        
+        case "HOST_UPDATE":
+        setPlayers(prev =>
+          prev.map(p =>
+            p.id === data.payload.id
+              ? {
+                  ... p,
+                  role: data.payload.role,
+                  team: data.payload.team
+                }
+              : p
+          )
+        );
+        break;
+            }
     };
 
     return () => ws.close();
@@ -130,7 +154,7 @@ export default function StartGame() {
         <h2 className='team-title red-title'>Red Team</h2>
         <div className='team-card red-card'>
           <div className='team-card-name-text'><span>{getPlayer('red', 'spymaster_red')?.name || ''}</span></div>
-          {!getPlayer('red', 'spymaster_red') && (
+          {!getPlayer('red', 'spymaster_red') && !currPlayerJoined && !hostJoined && (
             <button className= {`join-btn ${selected.role === 'spymaster_red' ? "joined" : "red-btn"}`} 
               onClick={() => handleJoin('red', 'spymaster_red')}
             >
@@ -141,7 +165,7 @@ export default function StartGame() {
         </div>
         <div className='team-card red-card'>
           <div className='team-card-name-text'><span>{getPlayer('red', 'operative_red')?.name || ''}</span></div>
-          {!getPlayer('red', 'operative_red') && (
+          {!getPlayer('red', 'operative_red') && !currPlayerJoined && !hostJoined && (
             <button className= {`join-btn ${selected.role === 'operative_red' ? "joined" : "red-btn"}`} 
               onClick={() => handleJoin('red', 'operative_red')}
             >
@@ -195,7 +219,7 @@ export default function StartGame() {
         <h2 className='team-title blue-title'>Blue Team</h2>
         <div className='team-card blue-card'>
           <div className='team-card-name-text'><span>{getPlayer('blue', 'spymaster_blue')?.name || ''}</span></div>
-          {!getPlayer('blue', 'spymaster_blue') && (
+          {!getPlayer('blue', 'spymaster_blue') && !currPlayerJoined && !hostJoined && (
             <button className= {`join-btn ${selected.role === 'spymaster_blue' ? "joined" : "blue-btn"}`} 
               onClick={() => handleJoin('blue', 'spymaster_blue')}
               >
@@ -206,7 +230,7 @@ export default function StartGame() {
         </div>
         <div className='team-card blue-card'>
           <div className='team-card-name-text'><span>{getPlayer('blue', 'operative_blue')?.name || ''}</span></div>
-          {!getPlayer('blue', 'operative_blue') && (
+          {!getPlayer('blue', 'operative_blue') && !currPlayerJoined && !hostJoined && (
             <button className= {`join-btn ${selected.role === 'operative_blue' ? "joined" : "blue-btn"}`} 
               onClick={() => handleJoin('blue', 'operative_blue')}
               >

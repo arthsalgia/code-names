@@ -185,7 +185,7 @@
   transition: transform 0.2s ease;
 }
 
-.join-btn:hover { transform: translateY(-2px); }
+.join-btn:hover { border : 2px solid rgb(234, 246, 253); }
 .join-btn:active { transform: scale(0.95); }
 
 .red-btn { background: #fc8181; color: #fff; }
