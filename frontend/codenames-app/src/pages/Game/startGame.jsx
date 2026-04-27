@@ -8,9 +8,11 @@ import addPlayerApi from '../../apis/addPlayer';
 import getPlayerApi from '../../apis/getPlayer';
 import getAllPlayersApi from '../../apis/getPlayers';
 import updateHostApi from '../../apis/updateHost';
+import hostStartGameApi from '../../apis/hostStartgame';
 
 export default function StartGame() {
   const { gameId } = useParams();
+  const [gameStarted, setGameStarted] = useState(false);
   const [username, setUsername] = useState("");
   const [selected, setSelected] = useState({team: '', role: ''});
 
@@ -22,17 +24,28 @@ export default function StartGame() {
 
   const [addPlayerLoading, setAddPlayerLoading] = useState(false);
   const [getPlayerLoading, setGetPlayerLoading] = useState(false);
+  const [startGameLoading, setStartGameLoading] = useState(false);
 
   const [currPlayerJoined, setCurrPlayerJoined] = useState(
     () => localStorage.getItem(`currJoined_${gameId}`) === "true"
   );
 
-const [hostJoined, setHostJoined] = useState(
-    () => localStorage.getItem(`hostJoined_${gameId}`) === "true"
-  );
+  const [hostJoined, setHostJoined] = useState(
+      () => localStorage.getItem(`hostJoined_${gameId}`) === "true"
+    );
 
-  function GoToGame() {
-    navigate(`/play-game/${gameId}`);
+
+  function handleStartGame() {
+    try {
+      setStartGameLoading(true);
+      await hostStartGameApi(gameId);
+    }
+    catch (err) {
+      console.error(err);
+    }
+    finally {
+      setAddPlayerLoading(false);
+    }
   }
 
   function handleJoin(team, role) {
@@ -144,17 +157,23 @@ const [hostJoined, setHostJoined] = useState(
           break;
         
         case "HOST_UPDATE":
-        const playerFormatted = data.payload.map(player => ({
-          id: player.id,
-          name: player.name,
-          role: player.role,
-          team: player.team,
-          host: player.host
-          }));
+          const playerFormatted = data.payload.map(player => ({
+            id: player.id,
+            name: player.name,
+            role: player.role,
+            team: player.team,
+            host: player.host
+            }));
 
-        setPlayers(playerFormatted);
-        break;
-            }
+          setPlayers(playerFormatted);
+          break;
+
+        case "GAME_START":
+          navigate(`/play-game/${gameId}`);
+          break;
+
+        
+      }
     };
 
     return () => ws.close();
@@ -190,7 +209,7 @@ useEffect(() => {
 
   
   return (
-    <div className={`root-container ${addPlayerLoading || getPlayerLoading ? "locked" : ""}`}>
+    <div className={`root-container ${addPlayerLoading || getPlayerLoading || startGameLoading ? "locked" : ""}`}>
 
       <div className='team-column'>
         <h2 className='team-title red-title'>Red Team</h2>
@@ -248,12 +267,12 @@ useEffect(() => {
         )}
 
         {isHost && (
-          <button className='button' onClick={() => GoToGame()}>
+          <button className='button' onClick={() => handleStartGame()}>
             <div><span>Play game</span></div>
           </button>
         )}
 
-        {(addPlayerLoading || getPlayerLoading) && <div className="loader"></div>}
+        {(addPlayerLoading || getPlayerLoading || startGameLoading) && <div className="loader"></div>}
         
       </div>
 
