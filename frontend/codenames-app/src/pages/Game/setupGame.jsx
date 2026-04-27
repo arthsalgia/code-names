@@ -101,8 +101,8 @@ export default function setupGame() {
         )}
 
         {error && (
-          <div className="setup-error">
-            <span className="setup-error-message">* Username required</span>
+          <div className="error">
+            <span className="error-message">* Username required</span>
           </div>
         )}
         </div>

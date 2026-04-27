@@ -98,5 +98,9 @@
 .blue-btn { background: #63b3ed; color: #fff; }
 .joined { background: #38a169 !important; color: white; }
 
-.start-error { text-align: center; }
-.start-error-message { color: #e53e3e; font-size: 0.9em; }
+.game-started {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

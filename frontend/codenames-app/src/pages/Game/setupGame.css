@@ -98,6 +98,3 @@
 
 .setup-play-button:hover { filter: brightness(1.1); }
 .setup-play-button:active { transform: scale(0.95); }
-
-.setup-error { text-align: center; }
-.setup-error-message { color: #e53e3e; font-size: 0.9em; }
