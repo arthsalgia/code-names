@@ -55,11 +55,11 @@ export default function setupGame() {
   }
 
   return (
-    <div className="root-container">
-      <div className="start-game">  
+    <div className="setup-root-container">
+      <div className="setup-inner">  
         <h1>Start new game</h1>
         {!gameId && (
-          <div className="start-card">
+          <div className="setup-card">
             <div className="input-container">
               <input
                 type="text"
@@ -81,18 +81,18 @@ export default function setupGame() {
         {loading && <div className="loader"></div>}
         
         {gameId && !loading &&(
-          <div className='game-actions'>
-            <div className='copy-section'>
-              <div className={'copy-label'}>
+          <div className='setup-game-actions'>
+            <div className='setup-copy-section'>
+              <div className={'setup-copy-label'}>
                 {copied ? "✅ Copied!" : "Click to copy game id"}
               </div>
 
-              <button className={`game-id-button ${copied ? 'copied' : ''}`}onClick={() => copyToClip(gameId)}>
-                <div className='game-id-text'>{gameId}</div>
+              <button className={`setup-game-id-button ${copied ? 'copied' : ''}`}onClick={() => copyToClip(gameId)}>
+                <div className='setup-game-id-text'>{gameId}</div>
               </button>
             </div>
             {ready && (
-              <Link to={`/start-game/${gameId}`} className="play-button">
+              <Link to={`/start-game/${gameId}`} className="setup-play-button">
                 Join Game
               </Link>
             )}
@@ -101,8 +101,8 @@ export default function setupGame() {
         )}
 
         {error && (
-          <div className="error">
-            <span className="error-message">* Username required</span>
+          <div className="setup-error">
+            <span className="setup-error-message">* Username required</span>
           </div>
         )}
         </div>

@@ -35,7 +35,9 @@ export default function StartGame() {
     );
 
 
-  function handleStartGame() {
+  async function handleStartGame() {
+    if (players.length < 4) return;
+
     try {
       setStartGameLoading(true);
       await hostStartGameApi(gameId);
@@ -209,7 +211,7 @@ useEffect(() => {
 
   
   return (
-    <div className={`root-container ${addPlayerLoading || getPlayerLoading || startGameLoading ? "locked" : ""}`}>
+    <div className={`start-root-container ${addPlayerLoading || getPlayerLoading || startGameLoading ? "locked" : ""}`}>
 
       <div className='team-column'>
         <h2 className='team-title red-title'>Red Team</h2>
@@ -237,7 +239,7 @@ useEffect(() => {
         </div>
       </div>
 
-      <div className="start-game">  
+      <div className="start-inner">  
         <h1>Join game</h1>
 
         {!isHost && !currPlayerJoined && (
@@ -266,11 +268,13 @@ useEffect(() => {
           </button>
         )}
 
-        {isHost && (
+        {isHost && hostJoined && (
           <button className='button' onClick={() => handleStartGame()}>
             <div><span>Play game</span></div>
           </button>
         )}
+
+        {currPlayerJoined && (<p>Waiting for host to start game...</p>)}
 
         {(addPlayerLoading || getPlayerLoading || startGameLoading) && <div className="loader"></div>}
         
@@ -304,8 +308,8 @@ useEffect(() => {
         
         
         {error && (
-          <div className="error">
-            <span className="error-message">* Username and team both required</span>
+          <div className="start-error">
+            <span className="start-error-message">* Username and team both required</span>
           </div>
         )}
 
