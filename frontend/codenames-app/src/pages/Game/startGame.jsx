@@ -23,8 +23,13 @@ export default function StartGame() {
   const [addPlayerLoading, setAddPlayerLoading] = useState(false);
   const [getPlayerLoading, setGetPlayerLoading] = useState(false);
 
-  const [currPlayerJoined, setCurrPlayerJoined] = useState(false);
-  const [hostJoined, setHostJoined] = useState(false);
+  const [currPlayerJoined, setCurrPlayerJoined] = useState(
+    () => localStorage.getItem(`currJoined_${gameId}`) === "true"
+  );
+
+const [hostJoined, setHostJoined] = useState(
+    () => localStorage.getItem(`hostJoined_${gameId}`) === "true"
+  );
 
   function GoToGame() {
     navigate(`/play-game/${gameId}`);
@@ -54,12 +59,13 @@ export default function StartGame() {
     });
 
 
-      setHostJoined(true);
+    localStorage.setItem(`hostJoined_${gameId}`, "true")
     } catch (err) {
       console.error(err);
     }
     finally {
       setAddPlayerLoading(false);
+      setHostJoined(true);
     }
   }
 
@@ -88,7 +94,8 @@ export default function StartGame() {
       console.error(err);
     } finally {
       setAddPlayerLoading(false);
-      setCurrPlayerJoined(true);
+      localStorage.setItem(`currJoined_${gameId}`, "true")
+      setCurrPlayerJoined(true)
     }
   }
 
@@ -137,17 +144,6 @@ export default function StartGame() {
           break;
         
         case "HOST_UPDATE":
-        setPlayers(prev =>
-          prev.map(p =>
-            p.id === data.payload.id
-              ? {
-                  ... p,
-                  role: data.payload.role,
-                  team: data.payload.team
-                }
-              : p
-          )
-        );
         const playerFormatted = data.payload.map(player => ({
           id: player.id,
           name: player.name,
@@ -157,12 +153,39 @@ export default function StartGame() {
           }));
 
         setPlayers(playerFormatted);
-
         break;
             }
     };
 
     return () => ws.close();
+}, [gameId]);
+
+useEffect(() => {
+  async function fetchPlayers() {
+    if (!gameId) return;
+
+    setGetPlayerLoading(true);
+
+    try {
+      const playerData = await getAllPlayersApi(gameId);
+
+      const playerFormatted = playerData.map(player => ({
+        id: player.id,
+        name: player.name,
+        role: player.role,
+        team: player.team,
+        host: player.host
+      }));
+
+      setPlayers(playerFormatted);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setGetPlayerLoading(false);
+    }
+  }
+
+  fetchPlayers();
 }, [gameId]);
 
   
