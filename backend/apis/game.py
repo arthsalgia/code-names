@@ -6,6 +6,7 @@ from ..schemas.game import Game
 from ..services.game_id import new_game_id
 from ..models.game import StartGameResponse
 from ..engine import get_session
+from ..core.connection_manager import manager
 from ..app import app
 
 
@@ -43,3 +44,10 @@ def game_exists(game_id: str = Query(..., description="ID of the game")):
         if game:
             return True
         return False
+    
+@app.post("/host-start-game")
+async def host_start_game(game_id: str):
+    await manager.broadcast(game_id, {
+        "type": "GAME_START"
+    })
+    return {"status": "ok"}
