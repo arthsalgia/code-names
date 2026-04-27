@@ -34,7 +34,6 @@ export default function StartGame() {
     if (!gameId) return;
     
     setSelected({ team, role });
-    setCurrPlayerJoined(true);
   } 
 
   function getPlayer(team, role) {
@@ -43,6 +42,8 @@ export default function StartGame() {
   
   async function handleHostJoinGame() {
     if (!selected.team || !selected.role) return;
+    
+    setAddPlayerLoading(true);
 
     try {
       await updateHostApi({
@@ -56,6 +57,9 @@ export default function StartGame() {
       setHostJoined(true);
     } catch (err) {
       console.error(err);
+    }
+    finally {
+      setAddPlayerLoading(false);
     }
   }
 
@@ -84,6 +88,7 @@ export default function StartGame() {
       console.error(err);
     } finally {
       setAddPlayerLoading(false);
+      setCurrPlayerJoined(true);
     }
   }
 
@@ -143,6 +148,16 @@ export default function StartGame() {
               : p
           )
         );
+        const playerFormatted = data.payload.map(player => ({
+          id: player.id,
+          name: player.name,
+          role: player.role,
+          team: player.team,
+          host: player.host
+          }));
+
+        setPlayers(playerFormatted);
+
         break;
             }
     };
@@ -158,7 +173,7 @@ export default function StartGame() {
         <h2 className='team-title red-title'>Red Team</h2>
         <div className='team-card red-card'>
           <div className='team-card-name-text'><span>{getPlayer('red', 'spymaster_red')?.name || ''}</span></div>
-          {!getPlayer('red', 'spymaster_red') && (
+          {!(getPlayer('red', 'spymaster_red') || hostJoined || currPlayerJoined) && (
             <button className= {`join-btn ${selected.role === 'spymaster_red' ? "joined" : "red-btn"}`} 
               onClick={() => handleJoin('red', 'spymaster_red')}
             >
@@ -169,7 +184,7 @@ export default function StartGame() {
         </div>
         <div className='team-card red-card'>
           <div className='team-card-name-text'><span>{getPlayer('red', 'operative_red')?.name || ''}</span></div>
-          {!getPlayer('red', 'operative_red') && (
+          {!(getPlayer('red', 'operative_red') || hostJoined || currPlayerJoined) && (
             <button className= {`join-btn ${selected.role === 'operative_red' ? "joined" : "red-btn"}`} 
               onClick={() => handleJoin('red', 'operative_red')}
             >
@@ -183,7 +198,7 @@ export default function StartGame() {
       <div className="start-game">  
         <h1>Join game</h1>
 
-        {!isHost && (
+        {!isHost && !currPlayerJoined && (
           <div className="start-card">
             <div className="input-container">
               <input
@@ -197,7 +212,7 @@ export default function StartGame() {
             </div>
           </div>)}
 
-        {!isHost && (
+        {!isHost && !currPlayerJoined && (
           <button className='button' onClick={() => handleJoinGame()}>
             <div><span>Join Game</span></div>
           </button>
@@ -223,7 +238,7 @@ export default function StartGame() {
         <h2 className='team-title blue-title'>Blue Team</h2>
         <div className='team-card blue-card'>
           <div className='team-card-name-text'><span>{getPlayer('blue', 'spymaster_blue')?.name || ''}</span></div>
-          {!getPlayer('blue', 'spymaster_blue') && (
+          {!(getPlayer('blue', 'spymaster_blue') || hostJoined || currPlayerJoined) && (
             <button className= {`join-btn ${selected.role === 'spymaster_blue' ? "joined" : "blue-btn"}`} 
               onClick={() => handleJoin('blue', 'spymaster_blue')}
               >
@@ -234,7 +249,7 @@ export default function StartGame() {
         </div>
         <div className='team-card blue-card'>
           <div className='team-card-name-text'><span>{getPlayer('blue', 'operative_blue')?.name || ''}</span></div>
-          {!getPlayer('blue', 'operative_blue') && (
+          {!(getPlayer('blue', 'operative_blue') || hostJoined || currPlayerJoined) && (
             <button className= {`join-btn ${selected.role === 'operative_blue' ? "joined" : "blue-btn"}`} 
               onClick={() => handleJoin('blue', 'operative_blue')}
               >

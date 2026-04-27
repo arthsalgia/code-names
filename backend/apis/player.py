@@ -150,18 +150,24 @@ async def update_host(player_data: UpdateHost):
         session.commit()
         session.refresh(player)
 
-        payload = {
+
+        players = session.query(Player).filter_by(game_id=p_game_id).all()
+
+        payload = [
+            {
                 "id": player.id,
                 "name": player.name,
                 "team": player.team.value,
-                "role": player.role.value,
-                "host": player.host,
-                "game_id": p_game_id
+                "role": player.role.value, 
+                "host": player.host
             }
+            for player in players
+        ]
 
         await manager.broadcast(p_game_id, {
-            "type": "HOST_UPDATE",
+            "type": "PLAYERS_ADD",
             "payload": payload
         })
 
-        return payload
+        return True
+
