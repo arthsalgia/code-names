@@ -3,12 +3,14 @@ import { useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
-import './startGame.css'
+
 import addPlayerApi from '../../apis/addPlayer';
 import getPlayerApi from '../../apis/getPlayer';
 import getAllPlayersApi from '../../apis/getPlayers';
 import updateHostApi from '../../apis/updateHost';
 import hostStartGameApi from '../../apis/hostStartgame';
+
+import './startGame.css'
 
 export default function StartGame() {
   const { gameId } = useParams();
@@ -137,6 +139,7 @@ export default function StartGame() {
       try {
         const player = await getPlayerApi(gameId, playerId);
         setIsHost(player.host === true);
+        localStorage.setItem(`isHost_${gameId}`, player.host === true)
       } catch (err) {
           console.error(err);
       } finally {
@@ -184,8 +187,8 @@ export default function StartGame() {
           navigate(`/play-game/${gameId}`);
           localStorage.setItem(`gameStarted_${gameId}`, 'true');
           setGameStarted(true);
+          localStorage.setItem(`players_${gameId}`, players)
           break;
-
         
       }
     };
@@ -227,6 +230,9 @@ useEffect(() => {
       {gameStarted && (
         <div className='game-started'>
           <h1>This game has already started</h1>
+          <button className="button" onClick={() => navigate("/")}>
+            <div><span>Go Home</span></div>
+          </button>
         </div>
       )}
 

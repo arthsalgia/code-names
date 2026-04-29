@@ -1,6 +1,6 @@
 export default async function getCards(gameId) {
   const res = await fetch(
-    `https://arthsalgia-codenames.onrender.com/get-players?game_id=${gameId}`,
+    `https://arthsalgia-codenames.onrender.com/get-cards?game_id=${gameId}`,
     {
       method: "GET",
     }

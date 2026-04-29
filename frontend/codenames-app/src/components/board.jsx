@@ -5,8 +5,13 @@ import { useState } from "react";
 export default function Board({ wordlist }) {
   return (
     <div className="board">
-      {wordlist.map((word, index) => (
-        <Card key={index} word={word}/>
+      {wordlist.map((card) => (
+        <Card
+          key={card.word}
+          word={card.word}
+          type={card.card_type}
+          guessed={card.guessed}
+        />
       ))}
     </div>
   );

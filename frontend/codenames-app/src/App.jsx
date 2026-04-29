@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/header/header.jsx'
 import Home from './pages/home.jsx'
-import PlayGame from './pages/playGame.jsx'
+import PlayGame from './pages/Game/playGame.jsx'
 import StartGame from './pages/Game/startGame.jsx';
 import SetupGame from './pages/Game/setupGame.jsx';
 import JoinGame from './pages/Game/joinGame.jsx';
