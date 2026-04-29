@@ -128,3 +128,7 @@ As this was my first time coding with react, I had to spend a lot of time unders
 - I want to add a responsive background and improve the aesthetics of the game <br><br>
 - Im currently using open sourced elements from [uiverse](https://uiverse.io) like some of the buttons and loaders, but I want to later design this myself 
 
+### This game was made by Arth Salgia (me)
+#### This was my first time using the react framework so I apologise about the strange commit messages and other things
+#### If you have any questions or comments about this page please reach out to me on my email arthsalgia@gmail.com
+
