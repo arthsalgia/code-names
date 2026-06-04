@@ -219,3 +219,36 @@ body {
   }
 }
 
+/* From Uiverse.io by joe-watson-sbf */ 
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.search__input {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: #d1d0d0;
+  border: none;
+  color: #444444;
+  padding: 0.7rem 1rem;
+  border-radius: 30px;
+  width: 12em;
+  transition: all ease-in-out .2s;
+  margin-right: -2rem;
+}
+
+.search__input:hover, .search__input:focus {
+  box-shadow: 0 0 1em #00000013;
+}
+
+.search__input:focus {
+  outline: none;
+  background-color: #f0eeee;
+}
+
+
+
+

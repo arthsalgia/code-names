@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import addPlayerApi from '../../apis/addPlayer';
 import getPlayerApi from '../../apis/getPlayer';
@@ -14,18 +15,21 @@ import './startGame.css'
 
 export default function StartGame() {
   const { gameId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [gameStarted, setGameStarted] = useState(
     () => localStorage.getItem(`gameStarted_${gameId}`) === "true"
   );
   const [username, setUsername] = useState("");
   const [selected, setSelected] = useState({team: '', role: ''});
 
-  const navigate = useNavigate();
   const [error, setError] = useState(false);
   const [startGameError, setStartGameError] = useState(false);
   const [isHost, setIsHost] = useState(false);
   const [players, setPlayers] = useState([]);
   const [playerId, setPlayerId] = useState(() => localStorage.getItem(`playerId_${gameId}`));
+  const [turn, setTurn] = location.state?.turn;
 
   const [addPlayerLoading, setAddPlayerLoading] = useState(false);
   const [getPlayerLoading, setGetPlayerLoading] = useState(false);
@@ -52,7 +56,7 @@ export default function StartGame() {
 
     try {
       setStartGameLoading(true);
-      await hostStartGameApi(gameId);
+      await hostStartGameApi(gameId, turn);
     }
     catch (err) {
       console.error(err);
@@ -93,6 +97,8 @@ export default function StartGame() {
     finally {
       setAddPlayerLoading(false);
       setHostJoined(true);
+      localStorage.setItem(`role_${gameId}`, selected.role)
+      localStorage.setItem(`team_${gameId}`, selected.team)
     }
   }
 
@@ -116,13 +122,14 @@ export default function StartGame() {
 
       localStorage.setItem(`playerId_${gameId}`, playerId);
       setPlayerId(playerId);
-
     } catch (err) {
       console.error(err);
     } finally {
       setAddPlayerLoading(false);
       localStorage.setItem(`currJoined_${gameId}`, "true")
       setCurrPlayerJoined(true)
+      localStorage.setItem(`role_${gameId}`, selected.role)
+      localStorage.setItem(`team_${gameId}`, selected.team)
     }
   }
 
@@ -187,7 +194,6 @@ export default function StartGame() {
           navigate(`/play-game/${gameId}`);
           localStorage.setItem(`gameStarted_${gameId}`, 'true');
           setGameStarted(true);
-          localStorage.setItem(`players_${gameId}`, players)
           break;
         
       }
@@ -195,6 +201,14 @@ export default function StartGame() {
 
     return () => ws.close();
 }, [gameId]);
+
+useEffect(() => {
+  localStorage.setItem(
+    `players_${gameId}`,
+    JSON.stringify(players)
+  );
+  localStorage.setItem(`currentTurn_${gameId}`, turn)
+}, [gameStarted, players, gameId]);
 
 useEffect(() => {
   async function fetchPlayers() {

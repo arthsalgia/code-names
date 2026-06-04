@@ -92,7 +92,7 @@ export default function setupGame() {
               </button>
             </div>
             {ready && (
-              <Link to={`/start-game/${gameId}`} className="setup-play-button">
+              <Link to={`/start-game/${gameId}`} className="setup-play-button" state={{turn : turn}}>
                 Join Game
               </Link>
             )}

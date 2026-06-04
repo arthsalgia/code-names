@@ -1,13 +1,11 @@
 import "./Card.css";
 import sharkImg from "../assets/shark.png";
 
-export default function Card({ word }) {
+export default function Card({ word, type, isSpy, guessed }) {
   return (
-    <div className="card">
-      <img className="card-bg-img" src={sharkImg} alt="shark" />
-      <div className="text">
-        <div className="h3">{word}</div>
-      </div>
+    <div className={`card ${isSpy ? `card-${type}` : ''}`}>
+
+      <div className="text">{word}</div>
     </div>
   );
 }

@@ -46,8 +46,9 @@ def game_exists(game_id: str = Query(..., description="ID of the game")):
         return False
     
 @app.post("/host-start-game")
-async def host_start_game(game_id: str):
+async def host_start_game(game_id: str, turn: str):
     await manager.broadcast(game_id, {
-        "type": "GAME_START"
+        "type": "GAME_START",
+        "payload": {"turn": turn}
     })
     return {"status": "ok"}

@@ -1,21 +1,244 @@
 .play-root-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  height: calc(100vh - 80px);
+}
+
+.top-bar {
+  width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 60px;
-  padding: 60px 20px;
+}
+
+.game-layout-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
   box-sizing: border-box;
-  font-family: "Cooper BT", serif;
+}
+
+.game-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+.team-column {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 2em;
+  align-self: flex-start;
+  margin-top: calc((100vh - 80px) * 0.05);
+}
+
+
+.team-column.red {
+  border: 10px solid #f85959; 
+  background-color: #ffffff;
+}
+
+.team-column.blue {
+  border: 10px solid #51b9f1; 
+  background-color: #ffffff;
+}
+
+.team-card {
+  max-width: 200px;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  text-align: center;
+}
+
+.team-card.red { background-color: #f88787; }
+
+.team-card.blue   { background-color: #c1eaff; }
+
+.team-card.red.current-player {
+  border: 7px solid #32e255;
+}
+
+.team-role-text {
+  font-weight: 600;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.name-text {
+  margin-bottom: 2px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.board-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.board-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  max-width: calc(100% - 300px);  
 }
 
 .play-game-started {
-  height: 100vh;
+  min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;   
   justify-content: center;
   align-items: center;
   gap: 20px;
+}
+
+.hint-bar {
+  width: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 20px;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;     
+  padding: 5px;
+}
+
+.game-info h1 {
+  margin: 0;
+  font-size: 1.8em;
+  
+}
+
+.game-info-details {
+  display: flex;
+  gap: 20px;
+}
+
+.game-info-details p {
+  margin: 0;
+  font-size: 1em;
+  color: #2c2c2c;
+}
+
+.turn {
+  transition: color 0.2s ease-in-out;
+}
+
+.turn.Red {
+  color: rgb(254, 83, 83);
+}
+
+.turn.Blue {
+  color: rgb(59, 59, 255);
+}
+
+.loading-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.input-field {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: #d1d0d0;
+  border: none;
+  color: #646464;
+  padding: 1rem;
+  border-radius: 30px;
+  transition: all ease-in-out .2s;
+}
+
+.input-field:hover,
+.input-field:focus {
+  box-shadow: 0 0 1em #00000013;
+}
+
+.input-field:focus {
+  outline: none;
+  background-color: #f0eeee;
+}
+
+.search__input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.num__input {
+  width: 2.2em;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.hint {
+  background-color: rgb(95, 95, 95);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;          
+  min-width: 0;         
+  padding: 7px;
+  border-radius: 5em;
+  border: 3px solid #6ac4df;
+  box-sizing: border-box;
+}
+
+.hint-search {
+  flex: 1;
+}
+
+.send-hint-button button {
+  font-family: inherit;
+  font-size: inherit;
+
+  background-color: #c1dfc8;
+  color: #414740;
+
+  border: 5px solid rgb(97, 195, 97);
+  border-radius: 30px;
+
+  padding: 0.7rem 1.2rem;
+
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.send-hint-button button:hover {
+  background-color: #b0debb;
+  border: 5px solid rgb(94, 179, 94);
+}
+
+.send-hint-button button:focus {
+  outline: none;
+  box-shadow: 0 0 1em #00000013;
+  background-color: #99dba8;
+}
+
+.send-hint-button button:active {
+  transform: scale(0.97);
 }

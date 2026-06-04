@@ -1,7 +1,9 @@
 .board {
-  padding-top: 50px;
   display: grid;
-  grid-template-columns: repeat(5, 200px);
-  gap: 12px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
   justify-content: center;
+  padding: 10px;
+  padding-bottom: 10px;
+  overflow: visible;
 }
