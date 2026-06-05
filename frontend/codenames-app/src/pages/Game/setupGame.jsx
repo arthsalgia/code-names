@@ -34,6 +34,7 @@ export default function setupGame() {
       const startData = await startGameApi();
       setGameId(startData.gameId);
       setTurn(startData.turn);
+      localStorage.setItem(`currentTurn_${startData.gameId}`, startData.turn);
 
       const addPlayerId = await addPlayerApi({
         name: hostName,
@@ -92,7 +93,7 @@ export default function setupGame() {
               </button>
             </div>
             {ready && (
-              <Link to={`/start-game/${gameId}`} className="setup-play-button" state={{turn : turn}}>
+              <Link to={`/start-game/${gameId}`} className="setup-play-button">
                 Join Game
               </Link>
             )}

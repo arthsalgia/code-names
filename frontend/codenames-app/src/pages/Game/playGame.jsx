@@ -14,6 +14,8 @@ export default function PlayGame() {
 
   const [cards, setCards] = useState([]);
   const [error, setError] = useState(false);
+  const [hintError, setHintError] = useState(false);
+  const [hintNumError, setHintNumError] = useState(false);
   
   const [getCardsLoading, setGetCardsLoading] = useState(false);
   
@@ -25,14 +27,14 @@ export default function PlayGame() {
     return saved ? JSON.parse(saved) : [];
   });
   const [gameStarted, setGameStarted] = useState(() => localStorage.getItem(`gameStarted_${gameId}`) === "true");
-  const [turn, setTurn] = useState(() => localStorage.getItem(`currentTurn_${gameId}`));
-  console.log(turn)
+  const [turn, setTurn] = useState("");
 
   const [team, setTeam] = useState(() => localStorage.getItem(`team_${gameId}`));
   const [role, setRole] = useState(() => localStorage.getItem(`role_${gameId}`));
   const [isSpymaster, setIsSpymaster] = useState(false);
 
   const [hint, setHint] = useState('');
+  const [numGuesses, setNumGuesses] = useState('');
 
   function checkIsSpymaster() {
     if (role === "spymaster_red" || role === "spymaster_blue") {
@@ -67,6 +69,19 @@ export default function PlayGame() {
       }
     }
   }
+
+  function handleSendHint() {
+    if (!hint.trim() || !numGuesses.trim()) {
+      setHintError(true);
+      setTimeout(() => setHintError(false), 3000);
+      return
+    }
+    if (isNaN(Number(numGuesses.trim())) || Number(numGuesses.trim()) > 10 || Number(numGuesses.trim()) < 0) {
+      setHintNumError(true);
+      setTimeout(() => setHintNumError(false), 3000);
+      return
+    }
+  }
   
   useEffect(() => {
     async function getCards() {
@@ -77,7 +92,9 @@ export default function PlayGame() {
         word,
         ...info
       }));
+        const savedTurn = localStorage.getItem(`currentTurn_${gameId}`);
         setCards(formattedCards);
+        setTurn(savedTurn);
       }
       catch (err){
         console.log(err);
@@ -140,12 +157,12 @@ export default function PlayGame() {
     
               <div className="team-column red">
                 <div className={`team-card red ${(role === 'spymaster_red' && team === 'red') ? "current-player" : ""}`}>
-                  <div className="team-role-text">Spy Master</div>
+                  <div className="team-role-text red">Spy Master</div>
                   <div className="name-text">{findPlayer('spymaster_red')}</div>
                 </div>
 
                 <div className={`team-card red ${(role === 'operative_red' && team === 'red') ? "current-player" : ""}`}>
-                  <div className="team-role-text">Operative</div>
+                  <div className="team-role-text red">Operative</div>
                   <div className="name-text">{findPlayer('operative_red')}</div>
                 </div>
               </div>
@@ -162,15 +179,21 @@ export default function PlayGame() {
                         type="text"
                         className="input-field search__input"
                         placeholder="Type a hint..."
+                        value={hint}
+                        onChange={(e) => setHint(e.target.value)}
+                        required
                       />
                     </div>
                     <input
                       type="text"
                       className="input-field num__input"
-                      placeholder="0"
+                      placeholder="-"
+                      value={numGuesses}
+                      onChange={(e) => setNumGuesses(e.target.value)}
+                      required
                     />
                     <div className="send-hint-button">
-                      <button>Send</button>
+                      <button onClick={() => handleSendHint()}>Send</button>
                     </div>
                   </div>
                 )}
@@ -178,17 +201,28 @@ export default function PlayGame() {
 
               <div className="team-column blue">
                 <div className={`team-card blue ${(role === 'spymaster_blue' && team === 'blue') ? "current-player" : ""}`}>
-                  <div className="team-role-text">Spy Master</div>
+                  <div className="team-role-text blue">Spy Master</div>
                   <div className="name-text">{findPlayer('spymaster_blue')}</div>
                 </div>
                 <div className={`team-card blue ${(role === 'operative_blue' && team === 'blue') ? "current-player" : ""}`}>
-                  <div className="team-role-text">Operative</div>
+                  <div className="team-role-text blue">Operative</div>
                   <div className="name-text">{findPlayer('operative_blue')}</div>
                 </div>
               </div>
             </div>
           </div>
 
+          {hintError && (
+              <div className="error">
+                <span className="error-message">* Must enter both guess and number of hints</span>
+              </div>
+            )}
+
+          {hintNumError && (
+              <div className="error">
+                <span className="error-message">* Number of hints must be an integer between 0 and 10 inclusive</span>
+              </div>
+            )}
         </div>
       )}
 
