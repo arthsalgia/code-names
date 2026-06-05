@@ -6,6 +6,8 @@
   height: calc(100vh - 80px);
 }
 
+.play-root-container.locked { pointer-events: none; }
+
 .top-bar {
   width: 100%;
   display: flex;
@@ -218,6 +220,11 @@
   border-radius: 5em;
   border: 3px solid #6ac4df;
   box-sizing: border-box;
+}
+
+.hint.locked { 
+  pointer-events: none; 
+  opacity: 0.5;
 }
 
 .hint-search {

@@ -190,16 +190,16 @@ export default function StartGame() {
 
         case "GAME_START":
           const game_turn = data.payload.turn
-          navigate(`/play-game/${gameId}`);
           localStorage.setItem(`gameStarted_${gameId}`, 'true');
           localStorage.setItem(`currentTurn_${gameId}`, game_turn);
           setGameStarted(true);
+          navigate(`/play-game/${gameId}`);
           break;
         
       }
     };
 
-    return () => ws.close();
+    return;
 }, [gameId]);
 
 useEffect(() => {

@@ -89,7 +89,7 @@ export default function PlayGame() {
 
     try {
       setSendHintLoading(true);
-      await sendHintApi({gameId : gameId, hint : hint, NOG : numGuesses, team : team});
+      await sendHintApi({gameId : gameId, hint : hint.trim(), NOG : Number(numGuesses.trim()), team : team});
     } catch (err) {
         console.error(err);
     } finally {
@@ -142,7 +142,7 @@ export default function PlayGame() {
       }
 
     }
-    return () => ws.close();
+    return ;
   }, [gameId])
 
   return (
@@ -194,7 +194,7 @@ export default function PlayGame() {
                 </div>
 
                 {isSpymaster && (
-                  <div className="hint">
+                  <div className={`hint ${turn !== team ? "locked" : ""}`}>
                     <div className="hint-search">
                       <input
                         type="text"
