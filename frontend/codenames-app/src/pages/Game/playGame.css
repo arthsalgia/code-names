@@ -81,7 +81,7 @@
 
   text-align: center;
   margin-bottom: 12px;
-  
+
 }
 
 .team-role-text.red {color: rgb(126, 2, 2);}
@@ -175,15 +175,6 @@
   color: rgb(59, 59, 255);
 }
 
-.loading-container {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
 .input-field {
   font-family: inherit;
   font-size: inherit;
@@ -262,4 +253,19 @@
 
 .send-hint-button button:active {
   transform: scale(0.97);
+}
+
+.loading-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-container.hint {
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  border-radius: 0;
 }

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Board from '../../components/board.jsx'
 import getCardsApi from '../../apis/getCards.jsx';
 import getPlayerApi from '../../apis/getPlayer.jsx';
+import sendHintApi from '../../apis/sendHint.jsx';
 
 import './playGame.css'
 
@@ -18,6 +19,7 @@ export default function PlayGame() {
   const [hintNumError, setHintNumError] = useState(false);
   
   const [getCardsLoading, setGetCardsLoading] = useState(false);
+  const [sendHintLoading, setSendHintLoading] = useState(false);
   
   const [isHost, setIsHost] = useState(() => localStorage.getItem(`isHost_${gameId}`) === "true");
   const [playerId, setPlayerId] = useState(() => localStorage.getItem(`playerId_${gameId}`));
@@ -35,6 +37,9 @@ export default function PlayGame() {
 
   const [hint, setHint] = useState('');
   const [numGuesses, setNumGuesses] = useState('');
+
+  const [recivedHint, setRecivedHint] = useState('');
+  const [recivedNOG, setRecivedNOG] = useState('');
 
   function checkIsSpymaster() {
     if (role === "spymaster_red" || role === "spymaster_blue") {
@@ -70,7 +75,7 @@ export default function PlayGame() {
     }
   }
 
-  function handleSendHint() {
+  async function handleSendHint() {
     if (!hint.trim() || !numGuesses.trim()) {
       setHintError(true);
       setTimeout(() => setHintError(false), 3000);
@@ -80,6 +85,15 @@ export default function PlayGame() {
       setHintNumError(true);
       setTimeout(() => setHintNumError(false), 3000);
       return
+    }
+
+    try {
+      setSendHintLoading(true);
+      await sendHintApi({gameId : gameId, hint : hint, NOG : numGuesses, team : team});
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setSendHintLoading(false);
     }
   }
   
@@ -117,7 +131,14 @@ export default function PlayGame() {
 
       switch (data.type) {
         case "GUESS":
+          break 
 
+        case "HINT":
+          const hintData = data.payload.hint
+          const NOG = data.payload.NOG
+          const teamData = data.payload.team
+
+          break
       }
 
     }
@@ -125,7 +146,7 @@ export default function PlayGame() {
   }, [gameId])
 
   return (
-    <div className={`play-root-container ${getCardsLoading ? "locked" : ""}`}>
+    <div className={`play-root-container ${getCardsLoading || sendHintLoading ? "locked" : ""}`}>
       
       {!gameStarted && (
         <div className='play-game-started'>
@@ -227,6 +248,7 @@ export default function PlayGame() {
       )}
 
       {getCardsLoading && (<div className='loading-container'><div className="loader"></div></div>)}
+      {sendHintLoading && (<div className='loading-container hint'><div className="loader"></div></div>)}
 
     </div>
   );
