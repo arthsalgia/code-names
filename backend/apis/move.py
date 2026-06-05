@@ -81,7 +81,9 @@ async def make_guess(guess: PostMove):
 
 @app.post("/send-hint")
 async def send_hint(game_id: str, hint: str, NOG: str ,team: str):
+    payload = {"hint" : hint, "NOG" : NOG, "team" : team}
     await manager.broadcast(game_id, {
         "type": "HINT",
-        "payload": {"hint" : hint, "NOG" : NOG, "team" : team}
+        "payload": payload
     })
+    return payload
