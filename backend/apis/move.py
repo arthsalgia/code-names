@@ -69,7 +69,8 @@ async def make_guess(guess: PostMove):
     payload = {
         "turn" : next_turn,
         "guessed" : guessed,
-        "winner" : winner
+        "winner" : winner,
+        "word" : word
             }
     
     await manager.broadcast(game_id, {
