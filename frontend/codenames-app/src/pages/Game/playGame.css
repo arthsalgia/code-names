@@ -76,6 +76,10 @@
   border: 7px solid #32e255;
 }
 
+.team-card.blue.current-player {
+  border: 7px solid #32e255;
+}
+
 .team-role-text {
   font-size: 1rem;
   font-weight: 700;

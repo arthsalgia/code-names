@@ -89,7 +89,7 @@ export default function PlayGame() {
 
     try {
       setSendHintLoading(true);
-      await sendHintApi({gameId : gameId, hint : hint.trim(), NOG : Number(numGuesses.trim()), team : team});
+      await sendHintApi({gameId : gameId, hint : hint.trim(), NOG : numGuesses.trim(), team : team});
     } catch (err) {
         console.error(err);
     } finally {
@@ -123,26 +123,30 @@ export default function PlayGame() {
 
   useEffect(() => {
     if (!gameId) return;
-
+    console.log("CONNECTED")
     const ws = new WebSocket(`wss://arthsalgia-codenames.onrender.com/ws/${gameId}`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-
+      console.log("EVENT")
       switch (data.type) {
         case "GUESS":
           break 
 
         case "HINT":
+          console.log("HINT")
           const hintData = data.payload.hint
           const NOG = data.payload.NOG
           const teamData = data.payload.team
+          console.log(hintData)
+          console.log(NOG)
+          console.log(teamData)
 
           break
       }
 
     }
-    return ;
+    return;
   }, [gameId])
 
   return (
