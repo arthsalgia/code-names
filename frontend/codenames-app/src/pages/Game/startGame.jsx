@@ -199,7 +199,7 @@ export default function StartGame() {
       }
     };
 
-    return;
+    return () => ws.close();
 }, [gameId]);
 
 useEffect(() => {

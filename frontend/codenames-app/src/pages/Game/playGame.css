@@ -124,6 +124,8 @@
   max-width: calc(100% - 300px);  
 }
 
+.board-column.locked { pointer-events: none;}
+
 .play-game-started {
   min-height: calc(100vh - 60px);
   display: flex;
@@ -276,7 +278,66 @@
 }
 
 .loading-container.hint {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.811);
   border: none;
   border-radius: 0;
+}
+
+.display-hint {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  
+  padding-top: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.811);
+}
+
+.display-img {
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 68vh; 
+}
+
+.display-img img {
+  max-width: 500px;
+  height: auto;
+}
+
+.display-hint-card {
+  position: fixed;
+  top: 60vh; 
+  width: 450px;
+  height: 150px;        
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;    
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 4em;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.display-hint-card.red {
+  background-color: #ff4646;
+}
+
+.display-hint-card.blue {
+  background-color: #96cef9;
+}
+
+.display-hint-text {
+  font-size: 2.5em;
+}
+
+.display-hint-number {
+  font-size: 2em;
 }

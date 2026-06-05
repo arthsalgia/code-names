@@ -7,6 +7,9 @@ import getCardsApi from '../../apis/getCards.jsx';
 import getPlayerApi from '../../apis/getPlayer.jsx';
 import sendHintApi from '../../apis/sendHint.jsx';
 
+import sharkRed from '../../assets/hintSharkRed.png'
+import sharkBlue from '../../assets/hintSharkBlue.png'
+
 import './playGame.css'
 
 export default function PlayGame() {
@@ -21,6 +24,7 @@ export default function PlayGame() {
   const [getCardsLoading, setGetCardsLoading] = useState(false);
   const [sendHintLoading, setSendHintLoading] = useState(false);
   
+  const [gameStarted, setGameStarted] = useState(() => localStorage.getItem(`gameStarted_${gameId}`) === "true");
   const [isHost, setIsHost] = useState(() => localStorage.getItem(`isHost_${gameId}`) === "true");
   const [playerId, setPlayerId] = useState(() => localStorage.getItem(`playerId_${gameId}`));
 
@@ -28,23 +32,35 @@ export default function PlayGame() {
     const saved = localStorage.getItem(`players_${gameId}`);
     return saved ? JSON.parse(saved) : [];
   });
-  const [gameStarted, setGameStarted] = useState(() => localStorage.getItem(`gameStarted_${gameId}`) === "true");
+  
   const [turn, setTurn] = useState("");
+  const [currRole, setCurrRole] = useState("spymaster")
 
   const [team, setTeam] = useState(() => localStorage.getItem(`team_${gameId}`));
   const [role, setRole] = useState(() => localStorage.getItem(`role_${gameId}`));
   const [isSpymaster, setIsSpymaster] = useState(false);
+  const [isOperative, setIsOperative] = useState(false);
 
   const [hint, setHint] = useState('');
   const [numGuesses, setNumGuesses] = useState('');
 
-  const [recivedHint, setRecivedHint] = useState('');
-  const [recivedNOG, setRecivedNOG] = useState('');
+  const [recivedHint, setRecivedHint] = useState({hint : '', NOG : '', team : ''});
+  const [displayHint, setDisplayHint] = useState(false);
 
-  function checkIsSpymaster() {
+  function checkRole() {
     if (role === "spymaster_red" || role === "spymaster_blue") {
       setIsSpymaster(true);
     }
+    if (role === "operative_red" || role === "operative_blue") {
+      setIsOperative(true);
+    }
+  }
+
+  function showHint() {
+    if (displayHint) return
+
+    setDisplayHint(true);
+    setTimeout(() => setDisplayHint(false), 3000);
   }
 
   function formatText(text) {
@@ -89,7 +105,7 @@ export default function PlayGame() {
 
     try {
       setSendHintLoading(true);
-      await sendHintApi({gameId : gameId, hint : hint.trim(), NOG : numGuesses.trim(), team : team});
+      await sendHintApi(gameId, hint.trim(), numGuesses.trim(), team);
     } catch (err) {
         console.error(err);
     } finally {
@@ -117,36 +133,40 @@ export default function PlayGame() {
         setGetCardsLoading(false);
       }
     }
-    getCards()
-    checkIsSpymaster()
+    getCards();
+    checkRole();
   }, [gameId]);
 
   useEffect(() => {
     if (!gameId) return;
-    console.log("CONNECTED")
     const ws = new WebSocket(`wss://arthsalgia-codenames.onrender.com/ws/${gameId}`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("EVENT")
       switch (data.type) {
         case "GUESS":
+          setCards(cards =>
+            cards.map(card =>
+              card.word === data.payload.word
+                ? { ...card, guessed: data.payload.guessed }
+                : card
+            )
+          );
+          setCurrRole('spymaster');
           break 
 
         case "HINT":
-          console.log("HINT")
           const hintData = data.payload.hint
-          const NOG = data.payload.NOG
+          const numGuesses = data.payload.NOG
           const teamData = data.payload.team
-          console.log(hintData)
-          console.log(NOG)
-          console.log(teamData)
-
+          setRecivedHint({hint : hintData, NOG : numGuesses, team : teamData})
+          setCurrRole('operative');
+          showHint();
           break
       }
 
     }
-    return;
+    return () => ws.close();
   }, [gameId])
 
   return (
@@ -192,13 +212,13 @@ export default function PlayGame() {
                 </div>
               </div>
 
-              <div className="board-column">
+              <div className={`board-column ${isSpymaster ? "locked" : ''}`}>
                 <div className="board-area">
                   <Board wordlist={cards} isSpy={isSpymaster} />
                 </div>
 
                 {isSpymaster && (
-                  <div className={`hint ${turn !== team ? "locked" : ""}`}>
+                  <div className={`hint ${(turn !== team || role !== currRole) ? "locked" : ""}`}>
                     <div className="hint-search">
                       <input
                         type="text"
@@ -222,6 +242,13 @@ export default function PlayGame() {
                     </div>
                   </div>
                 )}
+
+                {isOperative && (
+                  <div>
+                    
+                  </div>
+                )}
+
               </div>
 
               <div className="team-column blue">
@@ -253,6 +280,19 @@ export default function PlayGame() {
 
       {getCardsLoading && (<div className='loading-container'><div className="loader"></div></div>)}
       {sendHintLoading && (<div className='loading-container hint'><div className="loader"></div></div>)}
+
+      {displayHint && (
+        <div className={`display-hint ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>
+          <div className='display-img'>
+            <img src={recivedHint.team === 'red' ? sharkRed : sharkBlue} />
+          </div>
+
+          <div className={`display-hint-card ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>
+            <div className='display-hint-text'>{recivedHint.hint}</div>
+            <div className='display-hint-number'>{recivedHint.NOG}</div>
+          </div>
+        </div>
+        )}
 
     </div>
   );
