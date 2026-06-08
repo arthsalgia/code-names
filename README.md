@@ -121,9 +121,6 @@ Keeping the frontend consistent with the backend was difficult, before I was not
 As this was my first time coding with react, I had to spend a lot of time understanding the different functions and hooks used. 
 
 ## Future Improvements
-### Incomplete 
-- While it is possible to play the game via the render docs page, that is no fun<br><br>
-- Im currently working on the actual gameplay in the frontend 
 ### UI improvements
 - I want to add a responsive background and improve the aesthetics of the game <br><br>
 - Im currently using open sourced elements from [uiverse](https://uiverse.io) like some of the buttons and loaders, but I want to later design this myself 
