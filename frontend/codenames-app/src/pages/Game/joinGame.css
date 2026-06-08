@@ -12,7 +12,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
+  gap: 10px;
+  
 }
 
 .start-card {
@@ -24,6 +25,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 .game-actions .h1 {

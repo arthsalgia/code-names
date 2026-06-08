@@ -1,7 +1,7 @@
 import gameExistsApi from "../../apis/gameExists";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
+import './joinGame.css'
 export default function GoToGame() {
   const [error, setError] = useState(false);
   const [checkingGame, setCheckingGame] = useState(false);
