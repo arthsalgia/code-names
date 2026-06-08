@@ -20,9 +20,6 @@ class Role(enum.Enum):
 
 class Player(Base):
     __tablename__ = "player"
-    __table_args__ = (
-        UniqueConstraint("game_id", "name"),
-    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
