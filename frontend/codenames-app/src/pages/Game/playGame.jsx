@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +17,9 @@ import './playGame.css'
 export default function PlayGame() {
   const { gameId } = useParams();
   const navigate = useNavigate();
+
+  const wsRef = useRef(null);
+  const [reconnectCount, setReconnectCount] = useState(0);
 
   const [cards, setCards] = useState([]);
   const [error, setError] = useState(false);
@@ -46,6 +49,8 @@ export default function PlayGame() {
   const [role, setRole] = useState(() => localStorage.getItem(`role_${gameId}`));
   const [isSpymaster, setIsSpymaster] = useState(false);
   const [isOperative, setIsOperative] = useState(false);
+
+  const endTurnRef = useRef(false);
 
   const [hint, setHint] = useState('');
   const [numGuesses, setNumGuesses] = useState('');
@@ -131,6 +136,8 @@ export default function PlayGame() {
   }
 
   async function endTurn() {
+    if (endTurnRef.current) return;
+    endTurnRef.current = true;
     try {
       setChangeTurnLoading(true);
       await changeTurnApi(gameId)
@@ -138,6 +145,7 @@ export default function PlayGame() {
         console.error(err);
     } finally {
         setChangeTurnLoading(false);
+        endTurnRef.current = false;
     }
   }
   
@@ -169,7 +177,14 @@ export default function PlayGame() {
 
   useEffect(() => {
     if (!gameId) return;
+    if (wsRef.current) return;
+
     const ws = new WebSocket(`wss://arthsalgia-codenames.onrender.com/ws/${gameId}`);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      console.log("WS connected");
+    };
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -184,6 +199,7 @@ export default function PlayGame() {
           );
           if (data.payload.winner === 'red' || data.payload.winner === 'blue') {
             setWinner(data.payload.winner);
+            console.log("winner: ", data.payload.winner)
             setGameOver(true);
             localStorage.setItem(`gameOver_${gameId}`, 'true');
           }
@@ -207,7 +223,25 @@ export default function PlayGame() {
       }
 
     }
-    return () => ws.close();
+    ws.onerror = (err) => {
+      console.error("WS error:", err);
+    };
+
+    ws.onclose = () => {
+      console.log("WS closed, reconnecting...");
+      wsRef.current = null;
+      setTimeout(() => {
+        if (gameStarted) {
+          setReconnectCount(c => c + 1);
+        }
+      }, 2000);
+    };
+    return () => {
+      if (wsRef.current?.readyState === WebSocket.OPEN || wsRef.current?.readyState === WebSocket.CONNECTING) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+    };
   }, [gameId])
 
   return (
@@ -222,14 +256,7 @@ export default function PlayGame() {
         </div>
       )}
 
-      {gameStarted && gameOver && (
-        <div className='game-over'>
-          GAME OVER: winner {winner}
-        </div>
-      )}
-
-
-      {gameStarted && !getCardsLoading && !gameOver && (
+      {gameStarted && !getCardsLoading && (
         <div>
           
           <div className="top-bar">
@@ -294,7 +321,7 @@ export default function PlayGame() {
 
                 {isOperative && (
                   <div className={`${(turn !== team || !role.includes(currRole)) ? "end-turn-locked" : ""}`}>
-                    <button className='button'onClick={() => endTurn()}>
+                    <button className='button'onClick={() => endTurn()} disabled={changeTurnLoading}>
                       <div><span>End Turn</span></div>
                     </button>
                   </div>
@@ -331,7 +358,20 @@ export default function PlayGame() {
 
       {getCardsLoading && (<div className='loading-container'><div className="loader"></div></div>)}
       {sendHintLoading && (<div className='loading-container hint'><div className="loader"></div></div>)}
-      {sendGuessLoading && (<div className='loading-container'><div className="loader"></div></div>)}
+      {sendGuessLoading && (<div className='loading-container guess'><div className="loader"></div></div>)}
+      {changeTurnLoading && (<div className='loading-container guess'><div className="loader"></div></div>)}
+
+      {gameOver && (
+        <div className='game-over'>
+            <h1>GAME OVER</h1>
+            <h1 className={`${winner}`}>{formatText(winner)} wins</h1>
+            <div className='game-over-button'>
+              <button className="button" onClick={() => navigate("/")}>
+                <div><span>Play Again</span></div>
+              </button>
+            </div>
+        </div>
+      )}
 
       {displayHint && (
         <div className={`display-hint ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>

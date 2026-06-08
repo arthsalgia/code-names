@@ -55,21 +55,20 @@
   transform: translateY(1px) scale(0.99);
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   transition: transform 0.13s ease, box-shadow 0.08s ease;
-  border: 2px solid rgb(107, 223, 53);
 }
 .card:active::after {
   background: rgba(0,0,0,0.09);
 }
 
 .card-guessed {
-  border: 3px solid rgb(0, 0, 0);
+  
   pointer-events: none;
 }
 
 .guessed-red { background: #f45b5b; }
 .guessed-blue { background: #79ceff; }
-.guessed-neutral { background: #f6f6b6; }
-.guessed-assassin { background: #171f2c; color: #fff; }
+.guessed-neutral { background: #fff9a5; }
+.guessed-assassin { background: #2e394a; color: #fff; }
 
 .card-red { background: #ffc7c7; }
 .card-blue { background: #9bdaff; }

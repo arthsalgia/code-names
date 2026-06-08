@@ -9,8 +9,36 @@
 .play-root-container.locked { pointer-events: none; }
 
 .game-over {
+  position: fixed;
+  inset: 0;
 
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap : 1em;
+
+  background: rgba(0, 0, 0, 0.87);
+  border: none;
+  border-radius: 0;
+  color: white;
+  z-index: 9999;
 }
+
+.game-over h1 {
+  margin: 0;
+  font-size: 4rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.game-over-button {
+  margin: 2em;
+}
+
+.game-over h1.red {color: rgb(255, 61, 61);}
+.game-over h1.blue {color: rgb(112, 179, 255);}
 
 .top-bar {
   width: 100%;
@@ -283,6 +311,12 @@
 
 .loading-container.hint {
   background: rgba(0, 0, 0, 0.811);
+  border: none;
+  border-radius: 0;
+}
+
+.loading-container.guess {
+  background: rgba(0, 0, 0, 0.5);
   border: none;
   border-radius: 0;
 }
