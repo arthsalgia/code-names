@@ -7,6 +7,7 @@ import getCardsApi from '../../apis/getCards.jsx';
 import getPlayerApi from '../../apis/getPlayer.jsx';
 import sendHintApi from '../../apis/sendHint.jsx';
 import makeGuessApi from '../../apis/makeGuess.jsx'
+import changeTurnApi from '../../apis/changeTurn.jsx'
 
 import sharkRed from '../../assets/hintSharkRed.png'
 import sharkBlue from '../../assets/hintSharkBlue.png'
@@ -25,6 +26,7 @@ export default function PlayGame() {
   const [getCardsLoading, setGetCardsLoading] = useState(false);
   const [sendHintLoading, setSendHintLoading] = useState(false);
   const [sendGuessLoading, setSendGuessLoading] = useState(false);
+  const [changeTurnLoading, setChangeTurnLoading] = useState(false);
   
   const [gameStarted, setGameStarted] = useState(() => localStorage.getItem(`gameStarted_${gameId}`) === "true");
   const [gameOver, setGameOver] = useState(() => localStorage.getItem(`gameOver_${gameId}`) === "true");
@@ -127,6 +129,17 @@ export default function PlayGame() {
         setSendGuessLoading(false);
     }
   }
+
+  async function endTurn() {
+    try {
+      setChangeTurnLoading(true);
+      await changeTurnApi(gameId)
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setChangeTurnLoading(false);
+    }
+  }
   
   useEffect(() => {
     async function getCards() {
@@ -174,9 +187,6 @@ export default function PlayGame() {
             setGameOver(true);
             localStorage.setItem(`gameOver_${gameId}`, 'true');
           }
-          setCurrRole('spymaster');
-          localStorage.setItem(`currRole_${gameId}`, 'spymaster')
-          setTurn(data.payload.turn);
           break 
 
         case "HINT":
@@ -188,6 +198,12 @@ export default function PlayGame() {
           setCurrRole('operative');
           showHint();
           break
+
+        case "CHANGE_TURN":
+          const next_turn = data.payload.turn
+          setCurrRole('spymaster');
+          localStorage.setItem(`currRole_${gameId}`, 'spymaster')
+          setTurn(data.payload.turn);
       }
 
     }
@@ -207,7 +223,7 @@ export default function PlayGame() {
       )}
 
       {gameStarted && gameOver && (
-        <div>
+        <div className='game-over'>
           GAME OVER: winner {winner}
         </div>
       )}
@@ -277,8 +293,10 @@ export default function PlayGame() {
                 )}
 
                 {isOperative && (
-                  <div>
-                    
+                  <div className={`${(turn !== team || !role.includes(currRole)) ? "end-turn-locked" : ""}`}>
+                    <button className='button'onClick={() => endTurn()}>
+                      <div><span>End Turn</span></div>
+                    </button>
                   </div>
                 )}
 
@@ -313,7 +331,7 @@ export default function PlayGame() {
 
       {getCardsLoading && (<div className='loading-container'><div className="loader"></div></div>)}
       {sendHintLoading && (<div className='loading-container hint'><div className="loader"></div></div>)}
-      {sendGuessLoading && (<div className='loading-container hint'><div className="loader"></div></div>)}
+      {sendGuessLoading && (<div className='loading-container'><div className="loader"></div></div>)}
 
       {displayHint && (
         <div className={`display-hint ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>

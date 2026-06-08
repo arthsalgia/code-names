@@ -19,8 +19,6 @@ async def make_guess(guess: PostMove):
     game_id = guess.game_id
 
     curr_turn = TeamType(current_turn(game_id))
-    
-    next_turn = get_next_turn(curr_turn)
 
     if role not in (Role.operative_blue, Role.operative_red):
         raise HTTPException(
@@ -63,11 +61,9 @@ async def make_guess(guess: PostMove):
         guessed_card.guessed = True
 
         winner = end_game(session, game_id, guessed_card.card_type, team)
-        game.turn = next_turn
         session.commit()
     
     payload = {
-        "turn" : next_turn.value,
         "guessed" : guessed,
         "winner" : winner.value if winner else None,
         "word" : word
@@ -88,3 +84,28 @@ async def send_hint(game_id: str, hint: str, NOG: str ,team: str):
         "payload": payload
     })
     return payload
+
+@app.post("/change-turn")
+async def change_turn(game_id: str):
+    curr_turn = TeamType(current_turn(game_id))
+    
+    next_turn = get_next_turn(curr_turn)
+
+    with get_session() as session:
+
+        game = session.query(Game).filter_by(id=game_id).first()
+        
+        if not game:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Game does not exist"
+            )
+        
+        game.turn = next_turn
+
+        await manager.broadcast(game_id, {
+            "type": "CHANGE_TURN",
+            "payload": {"turn" : next_turn.value}
+        })
+
+        return next_turn.value

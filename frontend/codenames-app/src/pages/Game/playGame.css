@@ -8,6 +8,10 @@
 
 .play-root-container.locked { pointer-events: none; }
 
+.game-over {
+
+}
+
 .top-bar {
   width: 100%;
   display: flex;
@@ -340,4 +344,9 @@
 
 .display-hint-number {
   font-size: 2em;
+}
+
+.end-turn-locked {
+  opacity: 0.5;
+  pointer-events: none;
 }
