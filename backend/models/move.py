@@ -11,5 +11,7 @@ class PostMove(BaseModel):
 class PostMoveResponse(BaseModel):
     turn : str
     guessed : bool
-    winner : TeamType | None = None
+    winner : str | None = None
+    word : str
+
     

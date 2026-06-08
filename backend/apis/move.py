@@ -67,7 +67,7 @@ async def make_guess(guess: PostMove):
         session.commit()
     
     payload = {
-        "turn" : next_turn,
+        "turn" : next_turn.value,
         "guessed" : guessed,
         "winner" : winner.value if winner else None,
         "word" : word
