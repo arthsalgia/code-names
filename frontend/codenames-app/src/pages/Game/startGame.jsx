@@ -191,7 +191,9 @@ export default function StartGame() {
         case "GAME_START":
           const game_turn = data.payload.turn
           localStorage.setItem(`gameStarted_${gameId}`, 'true');
+          localStorage.setItem(`gameOver_${gameId}`, 'false');
           localStorage.setItem(`currentTurn_${gameId}`, game_turn);
+          localStorage.setItem(`currRole_${gameId}`, 'spymaster')
           setGameStarted(true);
           navigate(`/play-game/${gameId}`);
           break;

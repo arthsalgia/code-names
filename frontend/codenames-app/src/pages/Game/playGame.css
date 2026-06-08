@@ -124,7 +124,7 @@
   max-width: calc(100% - 300px);  
 }
 
-.board-column.locked { pointer-events: none;}
+.board-area.locked { pointer-events: none;}
 
 .play-game-started {
   min-height: calc(100vh - 60px);
@@ -151,7 +151,7 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;     
-  padding: 5px;
+  padding: 15px;
 }
 
 .game-info h1 {

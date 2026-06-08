@@ -69,7 +69,7 @@ async def make_guess(guess: PostMove):
     payload = {
         "turn" : next_turn,
         "guessed" : guessed,
-        "winner" : winner,
+        "winner" : winner.value if winner else None,
         "word" : word
             }
     

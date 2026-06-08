@@ -1,8 +1,8 @@
-import Card from "./card.jsx";
+import Card from "./Card.jsx";
 import "./board.css";
 import { useState } from "react";
 
-export default function Board({ wordlist, isSpy }) {
+export default function Board({ wordlist, isSpy, handleGuess }) {
   return (
     <div className="board">
       {wordlist.map((card) => (
@@ -12,6 +12,7 @@ export default function Board({ wordlist, isSpy }) {
           type={card.card_type}
           guessed={card.guessed}
           isSpy={isSpy}
+          onClick={() => handleGuess(card.word)}
         />
       ))}
     </div>

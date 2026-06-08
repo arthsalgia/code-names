@@ -6,6 +6,7 @@ import Board from '../../components/board.jsx'
 import getCardsApi from '../../apis/getCards.jsx';
 import getPlayerApi from '../../apis/getPlayer.jsx';
 import sendHintApi from '../../apis/sendHint.jsx';
+import makeGuessApi from '../../apis/makeGuess.jsx'
 
 import sharkRed from '../../assets/hintSharkRed.png'
 import sharkBlue from '../../assets/hintSharkBlue.png'
@@ -23,8 +24,11 @@ export default function PlayGame() {
   
   const [getCardsLoading, setGetCardsLoading] = useState(false);
   const [sendHintLoading, setSendHintLoading] = useState(false);
+  const [sendGuessLoading, setSendGuessLoading] = useState(false);
   
   const [gameStarted, setGameStarted] = useState(() => localStorage.getItem(`gameStarted_${gameId}`) === "true");
+  const [gameOver, setGameOver] = useState(() => localStorage.getItem(`gameOver_${gameId}`) === "true");
+  const [winner, setWinner] = useState('');
   const [isHost, setIsHost] = useState(() => localStorage.getItem(`isHost_${gameId}`) === "true");
   const [playerId, setPlayerId] = useState(() => localStorage.getItem(`playerId_${gameId}`));
 
@@ -34,7 +38,7 @@ export default function PlayGame() {
   });
   
   const [turn, setTurn] = useState("");
-  const [currRole, setCurrRole] = useState("spymaster")
+  const [currRole, setCurrRole] = useState("")
 
   const [team, setTeam] = useState(() => localStorage.getItem(`team_${gameId}`));
   const [role, setRole] = useState(() => localStorage.getItem(`role_${gameId}`));
@@ -57,8 +61,6 @@ export default function PlayGame() {
   }
 
   function showHint() {
-    if (displayHint) return
-
     setDisplayHint(true);
     setTimeout(() => setDisplayHint(false), 3000);
   }
@@ -106,10 +108,23 @@ export default function PlayGame() {
     try {
       setSendHintLoading(true);
       await sendHintApi(gameId, hint.trim(), numGuesses.trim(), team);
+      setHint('');
+      setNumGuesses('');
     } catch (err) {
         console.error(err);
     } finally {
         setSendHintLoading(false);
+    }
+  }
+
+  async function handleGuess(word) {
+    try {
+      setSendGuessLoading(true);
+      await makeGuessApi(gameId, word, role, team)
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setSendGuessLoading(false);
     }
   }
   
@@ -123,8 +138,10 @@ export default function PlayGame() {
         ...info
       }));
         const savedTurn = localStorage.getItem(`currentTurn_${gameId}`);
+        const savedCurrRole = localStorage.getItem(`currRole_${gameId}`);
         setCards(formattedCards);
         setTurn(savedTurn);
+        setCurrRole(savedCurrRole);
       }
       catch (err){
         console.log(err);
@@ -152,7 +169,14 @@ export default function PlayGame() {
                 : card
             )
           );
+          if (data.payload.winner === 'red' || data.payload.winner === 'blue') {
+            setWinner(data.payload.winner);
+            setGameOver(true);
+            localStorage.setItem(`gameOver_${gameId}`, 'true');
+          }
           setCurrRole('spymaster');
+          localStorage.setItem(`currRole_${gameId}`, 'spymaster')
+          setTurn(data.payload.turn);
           break 
 
         case "HINT":
@@ -160,6 +184,7 @@ export default function PlayGame() {
           const numGuesses = data.payload.NOG
           const teamData = data.payload.team
           setRecivedHint({hint : hintData, NOG : numGuesses, team : teamData})
+          localStorage.setItem(`currRole_${gameId}`, 'operative')
           setCurrRole('operative');
           showHint();
           break
@@ -181,20 +206,21 @@ export default function PlayGame() {
         </div>
       )}
 
+      {gameStarted && gameOver && (
+        <div>
+          GAME OVER: winner {winner}
+        </div>
+      )}
 
-      {gameStarted && !getCardsLoading && (
+
+      {gameStarted && !getCardsLoading && !gameOver && (
         <div>
           
           <div className="top-bar">
             <div className="game-info">
               <h1 className={`turn ${formatText(turn)}`}>
-                Turn: {formatText(turn)}
+                Turn: {formatText(turn)} {formatText(currRole)}
               </h1>
-
-              <div className="game-info-details">
-                <p>Team: {formatText(team)}</p>
-                <p>Role: {formatText(role)}</p>
-              </div>
             </div>
           </div>
           <div className="game-layout-wrapper">
@@ -212,13 +238,20 @@ export default function PlayGame() {
                 </div>
               </div>
 
-              <div className={`board-column ${isSpymaster ? "locked" : ''}`}>
-                <div className="board-area">
-                  <Board wordlist={cards} isSpy={isSpymaster} />
+              <div className='board-column'>
+                <div className={`board-area ${
+                    isSpymaster ||
+                    (isOperative && (team !== turn || !role.includes(currRole)))
+                      ? "locked"
+                      : ""
+                  }`}
+                >
+
+                  <Board wordlist={cards} isSpy={isSpymaster} handleGuess={handleGuess}/>
                 </div>
 
                 {isSpymaster && (
-                  <div className={`hint ${(turn !== team || role !== currRole) ? "locked" : ""}`}>
+                  <div className={`hint ${(turn !== team || !role.includes(currRole)) ? "locked" : ""}`}>
                     <div className="hint-search">
                       <input
                         type="text"
@@ -280,6 +313,7 @@ export default function PlayGame() {
 
       {getCardsLoading && (<div className='loading-container'><div className="loader"></div></div>)}
       {sendHintLoading && (<div className='loading-container hint'><div className="loader"></div></div>)}
+      {sendGuessLoading && (<div className='loading-container hint'><div className="loader"></div></div>)}
 
       {displayHint && (
         <div className={`display-hint ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>
