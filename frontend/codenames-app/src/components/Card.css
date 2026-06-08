@@ -61,6 +61,16 @@
   background: rgba(0,0,0,0.09);
 }
 
+.card-guessed {
+  border: 3px solid gold;
+  pointer-events: none;
+}
+
+.guessed-red { background: #f45b5b; }
+.guessed-blue { background: #79ceff; }
+.guessed-neutral { background: #F5F5DC; }
+.guessed-assassin { background: #2d3748; color: #fff; }
+
 .card-red { background: #ffc7c7; }
 .card-blue { background: #9bdaff; }
 .card-neutral { background: #F5F5DC; }
