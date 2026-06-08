@@ -36,12 +36,6 @@ async def add_player(player_data: CreatePlayerData):
                     detail="Only one host per game"
                 )
 
-            if player.name == new_name:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Name already taken"
-                )
-
             if player.team == TeamType.red:
                 num_red_teams += 1
             elif player.team == TeamType.blue:
