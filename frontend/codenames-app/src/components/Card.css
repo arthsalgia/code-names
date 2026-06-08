@@ -68,8 +68,8 @@
 
 .guessed-red { background: #f45b5b; }
 .guessed-blue { background: #79ceff; }
-.guessed-neutral { background: #F5F5DC; }
-.guessed-assassin { background: #2d3748; color: #fff; }
+.guessed-neutral { background: #f6f6b6; }
+.guessed-assassin { background: #171f2c; color: #fff; }
 
 .card-red { background: #ffc7c7; }
 .card-blue { background: #9bdaff; }
