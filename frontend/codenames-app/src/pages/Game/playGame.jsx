@@ -319,7 +319,7 @@ export default function PlayGame() {
                   </div>
                 )}
 
-                {isOperative && (
+                {isOperative && turn === team && role === currRole && (
                   <div className={`${(turn !== team || !role.includes(currRole)) ? "end-turn-locked" : ""}`}>
                     <button className='button'onClick={() => endTurn()} disabled={changeTurnLoading}>
                       <div><span>End Turn</span></div>
