@@ -23,6 +23,7 @@ export default function StartGame() {
   const [selected, setSelected] = useState({team: '', role: ''});
 
   const [error, setError] = useState(false);
+  const [hostTeamError, setHostTeamError] = useState(false);
   const [startGameError, setStartGameError] = useState(false);
   const [isHost, setIsHost] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -75,7 +76,11 @@ export default function StartGame() {
   }
   
   async function handleHostJoinGame() {
-    if (!selected.team || !selected.role) return;
+    if (!selected.team || !selected.role) {
+      setHostTeamError(true);
+      setTimeout(() => { setHostTeamError(false); }, 3000);
+      return;
+    }
     
     setAddPlayerLoading(true);
 
@@ -298,13 +303,13 @@ useEffect(() => {
 
           {!isHost && !currPlayerJoined && (
             <button className='button' onClick={() => handleJoinGame()}>
-              <div><span>Join Game</span></div>
+              <div><span>Join Lobby</span></div>
             </button>
           )}
             
           {isHost && !hostJoined && (
             <button className='button' onClick={() => handleHostJoinGame()}>
-              <div><span>Join Game</span></div>
+              <div><span>Join Lobby</span></div>
             </button>
           )}
 
@@ -350,6 +355,12 @@ useEffect(() => {
           {error && (
             <div className="error">
               <span className="error-message">* Username and team both required</span>
+            </div>
+          )}
+
+          {hostTeamError && (
+            <div className="error">
+              <span className="error-message">* Must select team</span>
             </div>
           )}
 

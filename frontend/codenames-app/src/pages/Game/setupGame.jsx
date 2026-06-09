@@ -94,7 +94,7 @@ export default function setupGame() {
             </div>
             {ready && (
               <Link to={`/start-game/${gameId}`} className="setup-play-button">
-                Join Game
+                Go To Lobby
               </Link>
             )}
             
