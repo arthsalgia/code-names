@@ -25,6 +25,9 @@ export default function StartGame() {
   const [error, setError] = useState(false);
   const [hostTeamError, setHostTeamError] = useState(false);
   const [startGameError, setStartGameError] = useState(false);
+  const [nameExistsError, setNameExistsError] = useState(false);
+  const [roleExistsError, setRoleExistsError] = useState(false);
+
   const [isHost, setIsHost] = useState(false);
   const [players, setPlayers] = useState([]);
   const [playerId, setPlayerId] = useState(() => localStorage.getItem(`playerId_${gameId}`));
@@ -111,10 +114,32 @@ export default function StartGame() {
       setTimeout(() => setError(false), 3000);
       return;
     }
-
     setAddPlayerLoading(true);
-
+    
+    let nameExists;
+    let roleExists;
     try {
+
+      const existingPlayers = await getAllPlayersApi(gameId);
+
+      nameExists = players.some(player => player.name === username);
+      roleExists = players.some(player => player.role === selected.role);
+
+      if (nameExists) {
+        setNameExistsError(true);
+        setTimeout(() => setNameExistsError(false), 3000);
+        setAddPlayerLoading(false);
+        return;
+      }
+
+      if (roleExists) {
+        console.log("TAKEN")
+        setRoleExistsError(true);
+        setTimeout(() => setRoleExistsError(false), 3000);
+        setAddPlayerLoading(false);
+        return;
+      }
+
       const playerId = await addPlayerApi({
         name: username,
         role: selected.role,
@@ -127,12 +152,17 @@ export default function StartGame() {
       setPlayerId(playerId);
     } catch (err) {
       console.error(err);
+      roleExists = true;
+      setRoleExistsError(true);
+      fetchPlayers()
     } finally {
       setAddPlayerLoading(false);
-      localStorage.setItem(`currJoined_${gameId}`, "true")
-      setCurrPlayerJoined(true)
-      localStorage.setItem(`role_${gameId}`, selected.role)
-      localStorage.setItem(`team_${gameId}`, selected.team)
+      if (!nameExists && !roleExists) {
+        localStorage.setItem(`currJoined_${gameId}`, "true")
+        setCurrPlayerJoined(true)
+        localStorage.setItem(`role_${gameId}`, selected.role)
+        localStorage.setItem(`team_${gameId}`, selected.team)
+      }
     }
   }
 
@@ -216,8 +246,7 @@ useEffect(() => {
   );
 }, [gameStarted, players, gameId]);
 
-useEffect(() => {
-  async function fetchPlayers() {
+async function fetchPlayers() {
     if (!gameId) return;
 
     setGetPlayerLoading(true);
@@ -241,6 +270,7 @@ useEffect(() => {
     }
   }
 
+useEffect(() => {
   fetchPlayers();
 }, [gameId]);
 
@@ -321,7 +351,7 @@ useEffect(() => {
 
           {currPlayerJoined && (<p>Waiting for host to start game...</p>)}
 
-          {(addPlayerLoading || getPlayerLoading || startGameLoading) && <div className="loader"></div>}
+          {(addPlayerLoading || getPlayerLoading || startGameLoading) && (<div className='loading-container'><div className="loader"></div></div>)}
           
         </div>
 
@@ -361,6 +391,18 @@ useEffect(() => {
           {hostTeamError && (
             <div className="error">
               <span className="error-message">* Must select team</span>
+            </div>
+          )}
+
+          {nameExistsError && (
+            <div className="error">
+              <span className="error-message">* Name already taken</span>
+            </div>
+          )}
+
+          {roleExistsError && (
+            <div className="error">
+              <span className="error-message">* Role already taken</span>
             </div>
           )}
 
