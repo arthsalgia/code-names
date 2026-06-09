@@ -154,8 +154,8 @@ export default function StartGame() {
       console.error(err);
       roleExists = true;
       setRoleExistsError(true);
-      fetchPlayers()
     } finally {
+      fetchPlayers()
       setAddPlayerLoading(false);
       if (!nameExists && !roleExists) {
         localStorage.setItem(`currJoined_${gameId}`, "true")
