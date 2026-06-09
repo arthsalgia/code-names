@@ -88,7 +88,7 @@ export default function setupGame() {
                 {copied ? "✅ Copied!" : "Click to copy game id"}
               </div>
 
-              <button className={`setup-game-id-button ${copied ? 'copied' : ''}`}onClick={() => copyToClip(gameId)}>
+              <button className={`setup-game-id-button ${copied ? 'copied' : ''}`}onClick={() => copyToClip(`https://arthsalgia-codenames.vercel.app/play-game/${gameId}`)}>
                 <div className='setup-game-id-text'>{gameId}</div>
               </button>
             </div>
