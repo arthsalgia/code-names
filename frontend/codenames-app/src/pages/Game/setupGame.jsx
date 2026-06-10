@@ -107,7 +107,7 @@ export default function setupGame() {
               </button>
             </div>
             {ready && (
-              <Link to={`/start-game/${gameId}`} className="setup-play-button" onClick={() => localStorage.setItem(`demoMode_${gameId}`, 'true')}>
+              <Link to={`/start-game/${gameId}`} className="setup-play-button" onClick={() => localStorage.setItem(`demoMode_${gameId}`, demoMode)}>
                 Go To Lobby
               </Link>
             )}
