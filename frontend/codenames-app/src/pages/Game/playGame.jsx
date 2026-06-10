@@ -18,6 +18,9 @@ export default function PlayGame() {
   const { gameId } = useParams();
   const navigate = useNavigate();
 
+  const [demoMode, setDemoMode] = useState(() => localStorage.getItem(`demoMode_${gameId}`) === "true");
+  const [demoSelected, setDemoSelected] = useState({team: '', role: ''});
+
   const wsRef = useRef(null);
   const [reconnectCount, setReconnectCount] = useState(0);
 
@@ -57,6 +60,44 @@ export default function PlayGame() {
 
   const [recivedHint, setRecivedHint] = useState({hint : '', NOG : '', team : ''});
   const [displayHint, setDisplayHint] = useState(false);
+
+  function demoHandleJoin(team, role) {    
+    setDemoSelected({ team, role });
+    setRole(role);
+    setTeam(team);
+
+    if (role.includes('spy')) {
+      setIsSpymaster(true);
+      setIsOperative(false);
+    }
+    else {
+      setIsOperative(true);
+      setIsSpymaster(false);
+    }
+  } 
+
+  async function demoChangeTurn() {
+    if (endTurnRef.current) return;
+    endTurnRef.current = true;
+    try {
+      setChangeTurnLoading(true);
+      await changeTurnApi(gameId)
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setChangeTurnLoading(false);
+        endTurnRef.current = false;
+    }
+  }
+
+  function demoChangeRole() {
+    if (currRole.includes('spy')) {
+      setCurrRole('operative');
+    }
+    else {
+      setCurrRole('spymaster');
+    }
+  }
 
   function checkRole() {
     if (role === "spymaster_red" || role === "spymaster_blue") {
@@ -260,10 +301,24 @@ export default function PlayGame() {
         <div>
           
           <div className="top-bar">
+            <div className="top-bar-left">
+              {demoMode && (
+                <button className={`demo-button ${(turn === 'red') ? "red" : "blue"}`} onClick={() => demoChangeTurn()}>
+                  Change Turn
+                </button>
+              )}
+            </div>
             <div className="game-info">
               <h1 className={`turn ${formatText(turn)}`}>
                 Turn: {formatText(turn)} {formatText(currRole)}
               </h1>
+            </div>
+            <div className="top-bar-right">
+              {demoMode && (
+                <button className={`demo-button ${(turn === 'red') ? "red" : "blue"}`} onClick={() => demoChangeRole()}>
+                  Change Role
+                </button>
+              )}
             </div>
           </div>
           <div className="game-layout-wrapper">
@@ -272,12 +327,30 @@ export default function PlayGame() {
               <div className="team-column red">
                 <div className={`team-card red ${(role === 'spymaster_red' && team === 'red') ? "current-player" : ""}`}>
                   <div className="team-role-text red">Spy Master</div>
-                  <div className="name-text">{findPlayer('spymaster_red')}</div>
+                    {demoMode && (
+                      <button className= {`join-btn ${demoSelected.role === 'spymaster_red' ? "joined" : "red-btn"}`} 
+                        onClick={() => demoHandleJoin('red', 'spymaster_red')}
+                      >
+                        {demoSelected.role === 'spymaster_red' ? 'Joined' : 'Join'}
+                      </button>
+                    )}
+                    {!demoMode && (  
+                      <div className="name-text">{findPlayer('spymaster_blue')}</div>
+                    )}
                 </div>
 
                 <div className={`team-card red ${(role === 'operative_red' && team === 'red') ? "current-player" : ""}`}>
                   <div className="team-role-text red">Operative</div>
-                  <div className="name-text">{findPlayer('operative_red')}</div>
+                  {demoMode && (
+                    <button className= {`join-btn ${demoSelected.role === 'operative_red' ? "joined" : "red-btn"}`} 
+                      onClick={() => demoHandleJoin('red', 'operative_red')}
+                    >
+                      {demoSelected.role === 'operative_red' ? 'Joined' : 'Join'}
+                    </button>
+                  )}
+                  {!demoMode && (  
+                    <div className="name-text">{findPlayer('operative_blue')}</div>
+                  )}
                 </div>
               </div>
 
@@ -319,7 +392,7 @@ export default function PlayGame() {
                   </div>
                 )}
 
-                {isOperative && turn === team && role === currRole && (
+                {isOperative && turn === team && role.includes(currRole) && (
                   <div className={`${(turn !== team || !role.includes(currRole)) ? "end-turn-locked" : ""}`}>
                     <button className='button'onClick={() => endTurn()} disabled={changeTurnLoading}>
                       <div><span>End Turn</span></div>
@@ -332,11 +405,29 @@ export default function PlayGame() {
               <div className="team-column blue">
                 <div className={`team-card blue ${(role === 'spymaster_blue' && team === 'blue') ? "current-player" : ""}`}>
                   <div className="team-role-text blue">Spy Master</div>
-                  <div className="name-text">{findPlayer('spymaster_blue')}</div>
+                  {demoMode && (
+                    <button className= {`join-btn ${demoSelected.role === 'spymaster_blue' ? "joined" : "blue-btn"}`} 
+                      onClick={() => demoHandleJoin('blue', 'spymaster_blue')}
+                    >
+                      {demoSelected.role === 'spymaster_blue' ? 'Joined' : 'Join'}
+                    </button>
+                  )}
+                  {!demoMode && (  
+                    <div className="name-text">{findPlayer('spymaster_blue')}</div>
+                  )}
                 </div>
                 <div className={`team-card blue ${(role === 'operative_blue' && team === 'blue') ? "current-player" : ""}`}>
                   <div className="team-role-text blue">Operative</div>
-                  <div className="name-text">{findPlayer('operative_blue')}</div>
+                  {demoMode && (
+                    <button className= {`join-btn ${demoSelected.role === 'operative_blue' ? "joined" : "blue-btn"}`} 
+                      onClick={() => demoHandleJoin('blue', 'operative_blue')}
+                    >
+                      {demoSelected.role === 'operative_blue' ? 'Joined' : 'Join'}
+                    </button>
+                  )}
+                  {!demoMode && (  
+                    <div className="name-text">{findPlayer('operative_blue')}</div>
+                  )}
                 </div>
               </div>
             </div>

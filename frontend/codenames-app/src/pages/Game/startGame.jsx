@@ -28,6 +28,7 @@ export default function StartGame() {
   const [nameExistsError, setNameExistsError] = useState(false);
   const [roleExistsError, setRoleExistsError] = useState(false);
 
+  const [demoMode, setDemoMode] = useState(() => localStorage.getItem(`demoMode_${gameId}`) === "true");
   const [isHost, setIsHost] = useState(false);
   const [players, setPlayers] = useState([]);
   const [playerId, setPlayerId] = useState(() => localStorage.getItem(`playerId_${gameId}`));
@@ -47,7 +48,7 @@ export default function StartGame() {
 
 
   async function handleStartGame() {
-    if (players.length < 4) {
+    if (!demoMode &&players.length < 4) {
       setStartGameError(true);
       setTimeout(() => {
         setStartGameError(false);
@@ -337,13 +338,13 @@ useEffect(() => {
             </button>
           )}
             
-          {isHost && !hostJoined && (
+          {isHost && !hostJoined && !demoMode && (
             <button className='button' onClick={() => handleHostJoinGame()}>
               <div><span>Join Lobby</span></div>
             </button>
           )}
 
-          {isHost && hostJoined && (
+          {(demoMode || (isHost && hostJoined)) && (
             <button className='button' onClick={() => handleStartGame()}>
               <div><span>Play game</span></div>
             </button>

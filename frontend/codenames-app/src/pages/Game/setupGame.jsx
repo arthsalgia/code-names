@@ -15,6 +15,16 @@ export default function setupGame() {
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [ready, setReady] = useState(false);
+  const [demoModeTry, setDemoModeTry] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
+  const [demoPwd, setDemoPwd] = useState('');
+
+  function handleDemoModeCheck() {
+    if (demoPwd === 'pwd') {
+      setDemoMode(true);
+    }
+    setDemoModeTry(false);
+  }
 
   function copyToClip( ID ) {
     navigator.clipboard.writeText(ID);
@@ -27,6 +37,10 @@ export default function setupGame() {
       setError(true);
       setTimeout(() => {setError(false)}, 3000);
       return;
+    }
+
+    if (hostName === "demomode") {
+      setDemoModeTry(true);
     }
 
     setLoading(true);
@@ -93,11 +107,38 @@ export default function setupGame() {
               </button>
             </div>
             {ready && (
-              <Link to={`/start-game/${gameId}`} className="setup-play-button">
+              <Link to={`/start-game/${gameId}`} className="setup-play-button" onClick={() => localStorage.setItem(`demoMode_${gameId}`, 'true')}>
                 Go To Lobby
               </Link>
             )}
-            
+
+          </div>
+        )}
+
+        {demoModeTry && (
+          <div className="demo-container">
+
+            <div className="demo-pwd-container">
+              <div className="setup-card">
+                <div className="input-container">
+                  <input
+                    type="text"
+                    value={demoPwd}
+                    onChange={(e) => setDemoPwd(e.target.value)}
+                    required
+                    />
+                  <label className="label">Password</label>
+                  <div className="underline"></div>
+                </div>
+              </div>
+              <button className="button" onClick={() => setDemoModeTry(false)}>
+                <div><span>Cancel</span></div>
+              </button>
+              <button className="button" onClick={() => handleDemoModeCheck()}>
+                <div><span>Enter</span></div>
+              </button>
+            </div>
+
           </div>
         )}
 
