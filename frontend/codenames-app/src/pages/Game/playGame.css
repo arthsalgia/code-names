@@ -323,7 +323,7 @@
   border-radius: 0;
 }
 
-.display-hint {
+.display {
   position: fixed;
   inset: 0;
   display: flex;
@@ -349,7 +349,7 @@
   height: auto;
 }
 
-.display-hint-card {
+.display-card {
   position: fixed;
   top: 60vh; 
   width: 450px;
@@ -366,21 +366,43 @@
   box-sizing: border-box;
 }
 
-.display-hint-card.red {
-  background-color: #ff4646;
+.display-turn-card {
+  position: fixed; 
+  width: 450px;
+  height: 250px;        
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;    
+  align-items: center;
+  justify-content: center;
+  border-radius: 2em;
+  gap: 10px;
+  box-sizing: border-box;
 }
 
-.display-hint-card.blue {
-  background-color: #96cef9;
-}
+.display-card.red {background-color: #ff4646;}
+.display-card.blue {background-color: #96cef9;}
 
-.display-hint-text {
+.display-turn-card.red {background-color: #ff4646;}
+.display-turn-card.blue {background-color: #96cef9;}
+
+
+.display-text-head {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+.display-text {
   font-size: 2.5em;
+  margin: 10px;
 }
 
-.display-hint-number {
-  font-size: 2em;
+.display-text-s {
+  font-size: 1.5em;
+  margin: 10px;
 }
+
+.display-number {font-size: 2em;}
 
 .end-turn-locked {
   opacity: 0.5;

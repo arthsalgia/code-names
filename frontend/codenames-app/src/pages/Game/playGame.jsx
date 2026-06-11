@@ -19,7 +19,7 @@ export default function PlayGame() {
   const navigate = useNavigate();
 
   const [demoMode, setDemoMode] = useState(() => localStorage.getItem(`demoMode_${gameId}`) === "true");
-  const [demoSelected, setDemoSelected] = useState({team: '', role: ''});
+  const [demoSelected, setDemoSelected] = useState({show : false, team: '', role: ''});
 
   const wsRef = useRef(null);
   const [reconnectCount, setReconnectCount] = useState(0);
@@ -54,6 +54,7 @@ export default function PlayGame() {
   const [isOperative, setIsOperative] = useState(false);
 
   const endTurnRef = useRef(false);
+  const [displayChangeTurn, setDisplayChangeTurn] = useState(false)
 
   const [hint, setHint] = useState('');
   const [numGuesses, setNumGuesses] = useState('');
@@ -115,6 +116,7 @@ export default function PlayGame() {
 
   function formatText(text) {
     if (!text) {return}
+    if ((text) => text.trim() !== "" && !isNaN(Number(text))) {return text}
     let newText = ''
 
     for (let i = 0; i < text.length; i++) {
@@ -139,6 +141,32 @@ export default function PlayGame() {
         return players[i].name;
       }
     }
+  }
+
+  function findPlayerTeam(role, team) {
+    if (!role || !team) return;
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].role.includes(role) && players[i].team === team) {
+        return players[i].name;
+      }
+    }
+  }
+
+  function checkPlayer(role, team) {
+    if (!role || !team || players.length < 4) return false;
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].role.includes(role) && players[i].team === team) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function isMyTurn() {
+    if (turn === team && role.includes(currRole)) {
+      return true;
+    }
+    return false;
   }
 
   async function handleSendHint() {
@@ -259,6 +287,8 @@ export default function PlayGame() {
         case "CHANGE_TURN":
           const next_turn = data.payload.turn
           setCurrRole('spymaster');
+          setDisplayChangeTurn(true);
+          setTimeout(() => {setDisplayChangeTurn(false)}, 2000);
           localStorage.setItem(`currRole_${gameId}`, 'spymaster')
           setTurn(data.payload.turn);
       }
@@ -310,7 +340,12 @@ export default function PlayGame() {
             </div>
             <div className="game-info">
               <h1 className={`turn ${formatText(turn)}`}>
-                Turn: {formatText(turn)} {formatText(currRole)}
+                {isMyTurn() && (
+                  <div>Turn: Your Turn</div>
+                )}
+                {!isMyTurn() && (
+                  <div>Turn: {formatText(checkPlayer(currRole, turn) ? findPlayerTeam(currRole, turn) : `${turn} ${currRole}` )}</div>
+                )}
               </h1>
             </div>
             <div className="top-bar-right">
@@ -335,7 +370,7 @@ export default function PlayGame() {
                       </button>
                     )}
                     {!demoMode && (  
-                      <div className="name-text">{findPlayer('spymaster_blue')}</div>
+                      <div className="name-text">{findPlayer('spymaster_red')}</div>
                     )}
                 </div>
 
@@ -349,7 +384,7 @@ export default function PlayGame() {
                     </button>
                   )}
                   {!demoMode && (  
-                    <div className="name-text">{findPlayer('operative_blue')}</div>
+                    <div className="name-text">{findPlayer('operative_red')}</div>
                   )}
                 </div>
               </div>
@@ -465,17 +500,32 @@ export default function PlayGame() {
       )}
 
       {displayHint && (
-        <div className={`display-hint ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>
+        <div className='display'>
           <div className='display-img'>
             <img src={recivedHint.team === 'red' ? sharkRed : sharkBlue} />
           </div>
 
-          <div className={`display-hint-card ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>
-            <div className='display-hint-text'>{recivedHint.hint}</div>
-            <div className='display-hint-number'>{recivedHint.NOG}</div>
+          <div className={`display-card ${recivedHint.team === 'red' ? 'red' : 'blue'}`}>
+            <div className='display-text'>{recivedHint.hint}</div>
+            <div className='display-number'>{recivedHint.NOG}</div>
           </div>
         </div>
         )}
+
+      {displayChangeTurn && (
+        <div className='display'>
+          <div className={`display-turn-card ${turn === 'red' ? 'red' : 'blue'}`}>
+            <div className='display-text-head'>Turn:</div>
+              {isMyTurn() && (
+                <div className='display-text'>Your Turn</div>
+              )}
+              {!isMyTurn() && (
+                <div className='display-text'>{formatText(checkPlayer(currRole, turn) ? findPlayerTeam(currRole, turn) : `${turn} ${currRole}` )}</div>
+              )}
+            <div className='display-text-s'>{`${formatText(turn)} ${formatText(currRole)}`}</div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
