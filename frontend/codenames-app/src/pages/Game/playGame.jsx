@@ -48,6 +48,8 @@ export default function PlayGame() {
   const [turn, setTurn] = useState("");
   const [currRole, setCurrRole] = useState("")
 
+  const [remainingCards, setRemainingCards] = useState({'red' : '', 'blue' : ''})
+  
   const [team, setTeam] = useState(() => localStorage.getItem(`team_${gameId}`));
   const [role, setRole] = useState(() => localStorage.getItem(`role_${gameId}`));
   const [isSpymaster, setIsSpymaster] = useState(false);
@@ -224,9 +226,17 @@ export default function PlayGame() {
       try {
         const data = await getCardsApi(gameId);
         const formattedCards = Object.entries(data).map(([word, info]) => ({
-        word,
-        ...info
-      }));
+          word,
+          ...info
+        }));
+        const redCount = formattedCards.filter(
+          card => card.card_type === "red"
+        ).length;
+
+        const blueCount = formattedCards.filter(
+          card => card.card_type === "blue"
+        ).length;
+        setRemainingCards({red : redCount, blue : blueCount})
         const savedTurn = localStorage.getItem(`currentTurn_${gameId}`);
         const savedCurrRole = localStorage.getItem(`currRole_${gameId}`);
         setCards(formattedCards);
@@ -259,13 +269,25 @@ export default function PlayGame() {
       const data = JSON.parse(event.data);
       switch (data.type) {
         case "GUESS":
-          setCards(cards =>
-            cards.map(card =>
+          setCards(prev => {
+            const updated = prev.map(card =>
               card.word === data.payload.word
                 ? { ...card, guessed: data.payload.guessed }
                 : card
-            )
-          );
+            );
+
+            const redCount = updated.filter(
+              c => c.card_type === "red" && !c.guessed
+            ).length;
+
+            const blueCount = updated.filter(
+              c => c.card_type === "blue" && !c.guessed
+            ).length;
+            
+            setRemainingCards({ red : redCount, blue : blueCount })
+            
+            return updated;
+          });
           if (data.payload.winner === 'red' || data.payload.winner === 'blue') {
             setWinner(data.payload.winner);
             console.log("winner: ", data.payload.winner)
@@ -360,6 +382,9 @@ export default function PlayGame() {
             <div className="game-layout">
     
               <div className="team-column red">
+                <div className="team-column-title red">
+                  Cards left: {remainingCards.red}
+                </div>
                 <div className={`team-card red ${(role === 'spymaster_red' && team === 'red') ? "current-player" : ""}`}>
                   <div className="team-role-text red">Spy Master</div>
                     {demoMode && (
@@ -438,6 +463,9 @@ export default function PlayGame() {
               </div>
 
               <div className="team-column blue">
+                <div className="team-column-title blue">
+                  Cards left: {remainingCards.blue}
+                </div>
                 <div className={`team-card blue ${(role === 'spymaster_blue' && team === 'blue') ? "current-player" : ""}`}>
                   <div className="team-role-text blue">Spy Master</div>
                   {demoMode && (

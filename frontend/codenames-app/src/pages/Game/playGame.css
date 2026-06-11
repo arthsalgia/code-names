@@ -83,9 +83,25 @@
   gap: 6px;
   padding: 8px;
   border-radius: 2em;
+  position: relative;
   align-self: flex-start;
   margin-top: calc((100vh - 80px) * 0.05);
 }
+
+.team-column-title {
+  min-width: 200px;
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+
+  font-weight: 700;
+  font-size: 2em;
+
+}
+.team-column-title.red {color: #f85959;}
+.team-column-title.blue {color: #24a8ee;}
 
 
 .team-column.red {
