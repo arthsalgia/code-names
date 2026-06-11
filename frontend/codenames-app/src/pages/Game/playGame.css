@@ -225,11 +225,11 @@
   transition: color 0.2s ease-in-out;
 }
 
-.turn.Red {
+.turn.red {
   color: rgb(254, 83, 83);
 }
 
-.turn.Blue {
+.turn.blue {
   color: rgb(59, 59, 255);
 }
 

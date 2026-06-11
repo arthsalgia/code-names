@@ -361,12 +361,12 @@ export default function PlayGame() {
               )}
             </div>
             <div className="game-info">
-              <h1 className={`turn ${formatText(turn)}`}>
+              <h1 className={`turn ${turn}`}>
                 {isMyTurn() && (
                   <div>Turn: Your Turn</div>
                 )}
                 {!isMyTurn() && (
-                  <div>Turn: {formatText(checkPlayer(currRole, turn) ? findPlayerTeam(currRole, turn) : `${turn} ${currRole}` )}</div>
+                  <div>Turn: {formatText(checkPlayer(currRole, turn) ? findPlayerTeam(currRole, turn) : `${formatText(turn)} ${formatText(currRole)}` )}</div>
                 )}
               </h1>
             </div>
