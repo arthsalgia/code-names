@@ -230,11 +230,11 @@ export default function PlayGame() {
           ...info
         }));
         const redCount = formattedCards.filter(
-          card => card.card_type === "red"
+          card => card.card_type === "red" && !card.guessed
         ).length;
 
         const blueCount = formattedCards.filter(
-          card => card.card_type === "blue"
+          card => card.card_type === "blue" && !card.guessed
         ).length;
         setRemainingCards({red : redCount, blue : blueCount})
         const savedTurn = localStorage.getItem(`currentTurn_${gameId}`);
