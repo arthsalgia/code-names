@@ -118,7 +118,7 @@ export default function PlayGame() {
 
   function formatText(text) {
     if (!text) {return}
-    if ((text) => text.trim() !== "" && !isNaN(Number(text))) {return text}
+    if (text.trim() !== "" && !isNaN(Number(text))) {return text;}
     let newText = ''
 
     for (let i = 0; i < text.length; i++) {
@@ -362,11 +362,15 @@ export default function PlayGame() {
             </div>
             <div className="game-info">
               <h1 className={`turn ${turn}`}>
-                {isMyTurn() && (
+                {isMyTurn() ? (
                   <div>Turn: Your Turn</div>
-                )}
-                {!isMyTurn() && (
-                  <div>Turn: {formatText(checkPlayer(currRole, turn) ? findPlayerTeam(currRole, turn) : `${formatText(turn)} ${formatText(currRole)}` )}</div>
+                ) : (
+                  <div>
+                    Turn:{" "}
+                    {checkPlayer(currRole, turn)
+                      ? formatText(findPlayerTeam(currRole, turn))
+                      : `${formatText(turn)} ${formatText(currRole)}`}
+                  </div>
                 )}
               </h1>
             </div>
