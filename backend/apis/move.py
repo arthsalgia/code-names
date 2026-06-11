@@ -59,6 +59,7 @@ async def make_guess(guess: PostMove):
             
         guessed = True
         guessed_card.guessed = True
+        session.flush()
 
         winner = end_game(session, game_id, guessed_card.card_type, team)
         
