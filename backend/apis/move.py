@@ -61,7 +61,7 @@ async def make_guess(guess: PostMove):
         guessed_card.guessed = True
 
         winner = end_game(session, game_id, guessed_card.card_type, team)
-        session.commit()
+        
     
     payload = {
         "guessed" : guessed,

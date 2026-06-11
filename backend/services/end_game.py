@@ -20,9 +20,11 @@ def end_game(session, game_id, card_type, team):
     if card_type == CardType.assassin:
         if team == TeamType.red:
             game.winner = TeamType.blue
+            session.commit()
             return TeamType.blue
         elif team == TeamType.blue:
             game.winner = TeamType.red
+            session.commit()
             return TeamType.red
     
     total_red_cards = session.query(Card).filter_by(
@@ -58,8 +60,10 @@ def end_game(session, game_id, card_type, team):
     if total_red_cards == red_cards:
         game.winner = TeamType.red
         winner = TeamType.red
+        session.commit()
     elif total_blue_cards == blue_cards:
         game.winner = TeamType.blue
         winner = TeamType.blue
+        session.commit()
 
     return winner
