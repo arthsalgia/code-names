@@ -9,7 +9,6 @@ class PostMove(BaseModel):
     word : str
 
 class PostMoveResponse(BaseModel):
-    turn : str
     guessed : bool
     winner : str | None = None
     word : str
