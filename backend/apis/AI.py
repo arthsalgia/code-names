@@ -18,7 +18,6 @@ def call_gemini(url, params, payload, retries=3):
         if response.status_code in [503, 429]:
             time.sleep(2 ** i) 
             continue
-        print(response.status_code, response.text)
         response.raise_for_status()
 
     raise Exception("Gemini API failed after retries")
@@ -73,13 +72,13 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
 
     text = data["candidates"][0]["content"]["parts"][0]["text"]
 
-    return {"data" : data, "response" : text}
     
     await manager.broadcast(game_id, {
         "type": "AI_HINT",
-        "payload": {"turn": ''}
+        "payload": {"reponse": text}
     })
-    return {"status": "ok"}
+
+    return {"response" : text}
 
 
 
