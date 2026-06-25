@@ -27,7 +27,7 @@ def call_gemini(url, params, payload, retries=3):
 async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: str = Query(...)):
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        "gemini-1.5-flash:generateContent"
+        "gemini-2.5-flash:generateContent"
     )
 
     params = {"key": GOOGLE_STUDIO_SSK}
