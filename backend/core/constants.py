@@ -13,3 +13,5 @@ if not DATABASE_URL:
 BASE_DIR = Path(__file__).resolve().parent.parent
 WORDS_URL = BASE_DIR / "assets" / "words.txt"
 NUM_CARDS = int(os.getenv("NUM_CARDS", 25))
+
+GOOGLE_STUDIO_SSK = os.getenv("GOOGLE_STUDIO_SSK")
