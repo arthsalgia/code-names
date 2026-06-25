@@ -30,6 +30,8 @@ def format_AI_hint_input(team, cards):
 
     Return ONLY valid JSON with no additional text:
 
+    example reponse:
+
     {{
     "word": "clue",
     "number_of_guesses": 3
