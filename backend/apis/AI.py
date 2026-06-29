@@ -77,7 +77,8 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
         "type": "AI_HINT",
         "payload": {"reponse": text}
     })
-
+    
+    print(text)
     return dict(text)
 
 
