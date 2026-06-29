@@ -75,17 +75,17 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
     text = data["candidates"][0]["content"]["parts"][0]["text"]
     parsed = json.loads(text)
 
-    payload = {
+    response = {
             "word": parsed["word"],
             "number_of_guesses": parsed["number_of_guesses"],
+            "team": team
         }
-    
     await manager.broadcast(game_id, {
         "type": "AI_HINT",
-        "payload": payload
+        "payload": response
     })
     
-    return payload
+    return response
 
 
 
