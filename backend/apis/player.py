@@ -13,7 +13,8 @@ async def add_player(player_data: CreatePlayerData):
     new_role = Role(player_data.role) if player_data.role else None
     new_host = player_data.host
     new_game_id = player_data.game_id
-
+    if new_name == "AI":
+        ai_mode = True
 
     with get_session() as session:
         players = session.query(Player).filter_by(game_id=new_game_id).all()
@@ -77,10 +78,18 @@ async def add_player(player_data: CreatePlayerData):
             for p in players
         ]
 
-        await manager.broadcast(new_game_id, {
-            "type": "PLAYERS_ADD",
-            "payload": payload
-        })
+        if not ai_mode:
+            await manager.broadcast(new_game_id, {
+                "type": "PLAYERS_ADD",
+                "payload": payload
+            })
+        else:
+            await manager.broadcast(new_game_id, {
+                "type": "AI_JOINED",
+                "payload": {
+                    "team": new_team
+                }
+            })
 
         return {"id": new_player.id}
     
