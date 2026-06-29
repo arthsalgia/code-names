@@ -89,7 +89,7 @@ async def add_player(player_data: CreatePlayerData):
             await manager.broadcast(new_game_id, {
                 "type": "AI_JOINED",
                 "payload": {
-                    "team": new_team
+                    "team": new_team.value if new_team else None
                 }
             })
 
