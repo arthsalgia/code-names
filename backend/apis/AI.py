@@ -1,5 +1,6 @@
 import requests
 import time
+import json
 
 from fastapi import HTTPException, status, Query
 from ..core.connection_manager import manager
@@ -71,14 +72,19 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
     data = call_gemini(url, params, payload, 3)
 
     text = data["candidates"][0]["content"]["parts"][0]["text"]
+    parsed = json.loads(text)
 
+    payload = {
+            "word": parsed["word"],
+            "number_of_guesses": parsed["number_of_guesses"],
+        }
     
     await manager.broadcast(game_id, {
         "type": "AI_HINT",
-        "payload": {text}
+        "payload": payload
     })
     
-    return text
+    return payload
 
 
 
