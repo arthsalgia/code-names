@@ -75,7 +75,7 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
     
     await manager.broadcast(game_id, {
         "type": "AI_HINT",
-        "payload": {"reponse": text}
+        "payload": {text}
     })
     
     return text
