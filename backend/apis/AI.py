@@ -37,13 +37,14 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Must provide cards"
         )
+    cards_parsed = json.loads(cards)
     
     payload = {
         "contents": [
             {
                 "parts": [
                     {
-                        "text": format_AI_hint_input(team, cards)
+                        "text": format_AI_hint_input(team, cards_parsed)
                     }
                 ]
             }
