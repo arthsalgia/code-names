@@ -13,6 +13,7 @@ async def add_player(player_data: CreatePlayerData):
     new_role = Role(player_data.role) if player_data.role else None
     new_host = player_data.host
     new_game_id = player_data.game_id
+    ai_mode = False
     if new_name == "AI":
         ai_mode = True
 
