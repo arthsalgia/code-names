@@ -78,14 +78,12 @@ async def add_player(player_data: CreatePlayerData):
             }
             for p in players
         ]
-        print("aimode", ai_mode)
         if not ai_mode:
             await manager.broadcast(new_game_id, {
                 "type": "PLAYERS_ADD",
                 "payload": payload
             })
         else:
-            print("broadcasting ai message", new_team.value)
             await manager.broadcast(new_game_id, {
                 "type": "AI_JOINED",
                 "payload": {

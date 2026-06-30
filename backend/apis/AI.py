@@ -68,22 +68,34 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
             }
         }
     }
+    try:
+        await manager.broadcast(game_id, {
+            "type": "AI_THINKING",
+            "payload": {"team": team}
+        })
 
+        data = call_gemini(url, params, payload, 3)
 
-    data = call_gemini(url, params, payload, 3)
+        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        parsed = json.loads(text)
 
-    text = data["candidates"][0]["content"]["parts"][0]["text"]
-    parsed = json.loads(text)
+        response = {
+                "word": parsed["word"],
+                "number_of_guesses": parsed["number_of_guesses"],
+                "team": team
+            }
+        await manager.broadcast(game_id, {
+            "type": "AI_HINT",
+            "payload": response
+        })
 
-    response = {
-            "word": parsed["word"],
-            "number_of_guesses": parsed["number_of_guesses"],
-            "team": team
-        }
-    await manager.broadcast(game_id, {
-        "type": "AI_HINT",
-        "payload": response
-    })
+    except Exception as e:
+        await manager.broadcast(game_id, {
+            "type": "AI_HINT_FAILED",
+            "payload": {"team": team}
+        })
+        raise HTTPException(status_code=500, detail=str(e))
+
     
     return response
 
