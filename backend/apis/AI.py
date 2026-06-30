@@ -1,7 +1,7 @@
 import requests
-import time
 import json
 import httpx
+import traceback
 
 from fastapi import HTTPException, status, Query
 from ..core.connection_manager import manager
@@ -94,6 +94,8 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
         })
 
     except Exception as e:
+        print("EXCEPTION TYPE:", type(e))
+        print("EXCEPTION TRACEBACK:", traceback.format_exc())
         await manager.broadcast(game_id, {
             "type": "AI_HINT_FAILED",
             "payload": {"team": team}
