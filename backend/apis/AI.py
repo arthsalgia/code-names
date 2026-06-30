@@ -22,6 +22,7 @@ async def call_gemini(url, params, payload, retries=3):
                 import asyncio
                 await asyncio.sleep(2 ** i)
                 continue
+            print("GEMINI ERROR BODY:", response.text)  
             response.raise_for_status()
 
     raise Exception("Gemini API failed after retries")
