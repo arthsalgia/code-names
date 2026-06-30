@@ -1,4 +1,4 @@
-import requests
+import asyncio
 import json
 import httpx
 import traceback
@@ -11,18 +11,25 @@ from ..app import app
 
 
 async def call_gemini(url, params, payload, retries=3):
-    async with httpx.AsyncClient() as client:
+    timeout = httpx.Timeout(30.0, connect=10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         for i in range(retries):
-            response = await client.post(url, params=params, json=payload)
+            try:
+                response = await client.post(url, params=params, json=payload)
+            except httpx.ReadTimeout:
+                if i < retries - 1:
+                    await asyncio.sleep(2 ** i)
+                    continue
+                raise Exception("Gemini API timed out after retries")
 
             if response.status_code == 200:
                 return response.json()
 
             if response.status_code in [503, 429]:
-                import asyncio
                 await asyncio.sleep(2 ** i)
                 continue
-            print("GEMINI ERROR BODY:", response.text)  
+
+            print("GEMINI ERROR BODY:", response.text)
             response.raise_for_status()
 
     raise Exception("Gemini API failed after retries")
