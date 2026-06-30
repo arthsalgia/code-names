@@ -1,6 +1,7 @@
 import requests
 import time
 import json
+import httpx
 
 from fastapi import HTTPException, status, Query
 from ..core.connection_manager import manager
@@ -9,17 +10,19 @@ from ..services.AI import format_AI_hint_input
 from ..app import app
 
 
-def call_gemini(url, params, payload, retries=3):
-    for i in range(retries):
-        response = requests.post(url, params=params, json=payload)
+async def call_gemini(url, params, payload, retries=3):
+    async with httpx.AsyncClient() as client:
+        for i in range(retries):
+            response = await client.post(url, params=params, json=payload)
 
-        if response.status_code == 200:
-            return response.json()
+            if response.status_code == 200:
+                return response.json()
 
-        if response.status_code in [503, 429]:
-            time.sleep(2 ** i) 
-            continue
-        response.raise_for_status()
+            if response.status_code in [503, 429]:
+                import asyncio
+                await asyncio.sleep(2 ** i)
+                continue
+            response.raise_for_status()
 
     raise Exception("Gemini API failed after retries")
 
@@ -74,7 +77,7 @@ async def get_AI_hint(game_id: str = Query(...), cards: str = Query(...), team: 
             "payload": {"team": team}
         })
 
-        data = call_gemini(url, params, payload, 3)
+        data = await call_gemini(url, params, payload, 3)
 
         text = data["candidates"][0]["content"]["parts"][0]["text"]
         parsed = json.loads(text)

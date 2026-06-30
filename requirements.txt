@@ -4,3 +4,4 @@ sqlalchemy==2.0.35
 psycopg[binary]==3.3.3
 python-dotenv==1.0.1
 requests
+httpx
